@@ -1,0 +1,1 @@
+exec xss-lock -- /usr/bin/swaylock

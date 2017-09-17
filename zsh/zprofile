@@ -1,0 +1,12 @@
+export PATH=$PATH:$HOME/.local/bin
+
+export PAGER=less
+export EDITOR=nvim
+export BROWSER=chromium
+
+export XKB_DEFAULT_LAYOUT=it
+SWAY_CURSOR_THEME=Neutral
+
+# ssh-agent
+eval $(systemctl --user show-environment | grep SSH_AUTH_SOCK)
+export SSH_AUTH_SOCK
