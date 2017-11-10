@@ -1,12 +1,24 @@
+## PATH
 export PATH=$PATH:$HOME/.local/bin
 
+## Useful environment variables
 export PAGER=less
 export EDITOR=nvim
 export BROWSER=chromium
 
-export XKB_DEFAULT_LAYOUT=it
-SWAY_CURSOR_THEME=Neutral
-
-# ssh-agent
+## ssh-agent
 eval $(systemctl --user show-environment | grep SSH_AUTH_SOCK)
 export SSH_AUTH_SOCK
+
+## Wayland
+export GDK_BACKEND=wayland
+export CLUTTER_BACKEND=wayland
+export QT_QPA_PLATFORM=wayland-egl
+export ECORE_EVAS_ENGINE=wayland_egl
+export ELM_ENGINE=wayland_egl
+export SDL_VIDEODRIVER=wayland
+export _JAVA_AWT_WM_NONREPARENTING=1
+
+## Sway
+export XKB_DEFAULT_LAYOUT=it
+export SWAY_CURSOR_THEME=Neutral
