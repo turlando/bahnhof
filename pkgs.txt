@@ -36,3 +36,4 @@ xcursor-neutral
 arc-gtk-theme
 arc-icon-theme
 otf-overpass
+ttf-font-awesome

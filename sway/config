@@ -132,14 +132,21 @@ floating_modifier  $mod  normal
 ###############################################################################
 
 bar {
-    position bottom
     output LVDS-1
+    position bottom
+
+    mode hide
+    modifier $mod+x
+
+    font pango:DejaVu Sans Mono, Awesome 8
 
     colors {
         statusline #ffffff
         background #323232
         inactive_workspace #32323200 #32323200 #5c5c5c
     }
+
+    status_command i3status
 }
 
 ###############################################################################

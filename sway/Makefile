@@ -1,5 +1,6 @@
 .PHONY: all
 all:  /home/$(USER)/.config/sway/config /home/$(USER)/.config/sway/autostart \
+      /home/$(USER)/.config/i3status/config \
       /home/$(USER)/.local/bin/lsws \
       sway-reload
 
@@ -7,6 +8,9 @@ all:  /home/$(USER)/.config/sway/config /home/$(USER)/.config/sway/autostart \
 	install -o$(USER) -gusers -m664 -D $< $@
 
 /home/$(USER)/.config/sway/autostart: autostart
+	install -o$(USER) -gusers -m664 -D $< $@
+
+/home/$(USER)/.config/i3status/config: i3status.conf
 	install -o$(USER) -gusers -m664 -D $< $@
 
 /home/$(USER)/.local/bin/lsws: lsws
