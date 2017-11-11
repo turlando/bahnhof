@@ -12,10 +12,6 @@ set $down   j
 set $up     k
 set $right  l
 
-## Workspace operations
-set  $s-ws-switch  swaymsg workspace $(lsws | $x-menu -p "→")
-set  $s-ws-move    swaymsg move container to workspace $(lsws | $x-menu -p "→")
-
 ## Applications
 set  $x-terminal  mate-terminal
 set  $x-menu-run  dmenu_run -b -fn DejaVuSans-10
@@ -29,6 +25,10 @@ set  $x-mic-mute  pactl set-source-mute 1 toggle
 
 set  $x-grab      swaygrab /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
 set  $x-grab-cnt  swaygrab -a /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
+
+## Workspace operations
+set  $s-ws-switch  swaymsg workspace $(lsws | $x-menu -p "→")
+set  $s-ws-move    swaymsg move container to workspace $(lsws | $x-menu -p "→")
 
 
 ###############################################################################
