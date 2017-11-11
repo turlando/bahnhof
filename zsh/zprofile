@@ -11,7 +11,8 @@ eval $(systemctl --user show-environment | grep SSH_AUTH_SOCK)
 export SSH_AUTH_SOCK
 
 ## Wayland
-export GDK_BACKEND=wayland
+# Disabled because it breaks GTK3 in both Sway and OpenBox.
+# export GDK_BACKEND=wayland
 export CLUTTER_BACKEND=wayland
 export QT_QPA_PLATFORM=wayland-egl
 export ECORE_EVAS_ENGINE=wayland_egl
