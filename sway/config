@@ -2,152 +2,160 @@
 ## VARIABLES                                                                 ##
 ###############################################################################
 
-# Modifiers
+## Modifiers
 set  $mod  Mod4
 set  $alt  Shift
 
-# vi-like direction keys
+## vi-like direction keys
 set $left   h
 set $down   j
 set $up     k
 set $right  l
 
-# Applications
+## Workspace operations
+set  $s-ws-switch  swaymsg workspace $(lsws | $x-menu -p "→")
+set  $s-ws-move    swaymsg move container to workspace $(lsws | $x-menu -p "→")
+
+## Applications
 set  $x-terminal  mate-terminal
-set  $x-menu_run  dmenu_run -b -fn DejaVuSans-10
+set  $x-menu-run  dmenu_run -b -fn DejaVuSans-10
 set  $x-menu      dmenu     -b -fn DejaVuSans-10
 set  $x-lock      swaylock
 
-set  $x-vol_up    pamixer -i 5
-set  $x-vol_down  pamixer -d 5
-set  $x-vol_mute  pamixer -t
-set  $x-mic_mute  pactl set-source-mute 1 toggle
+set  $x-vol-up    pamixer -i 5
+set  $x-vol-down  pamixer -d 5
+set  $x-vol-mute  pamixer -t
+set  $x-mic-mute  pactl set-source-mute 1 toggle
 
 set  $x-grab      swaygrab /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
-set  $x-grab_cnt  swaygrab -a /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
+set  $x-grab-cnt  swaygrab -a /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
+
 
 ###############################################################################
 ## APPEARANCE                                                                ##
 ###############################################################################
 
-# Font
-font pango:DejaVuSans 11px
+## Font
+font  pango:DejaVuSans 11px
 
-# Get rid of title bars on applications.
-default_border none
+## Get rid of title bars on applications.
+default_border  none
 
 
 ###############################################################################
 ## KEY BINDINGS                                                              ##
 ###############################################################################
  
-# reload the configuration file
-bindsym  $mod+$alt+r      reload
+## Exit Sway
+bindsym  $mod+$alt+e  exit
 
-# exit sway (logs you out of your wayland session)
-bindsym  $mod+$alt+e       exit
+## Reload Sway configuration
+bindsym  $mod+$alt+r  reload
 
-# "split" the current object of your focus
-bindsym  $mod+b            splith
-bindsym  $mod+v            splitv
+## Move your focus around
+bindsym  $mod+$left   focus left
+bindsym  $mod+$down   focus down
+bindsym  $mod+$up     focus up
+bindsym  $mod+$right  focus right
 
-# Make the current focus fullscreen
-bindsym  $mod+f            fullscreen
-
-# Toggle the current focus between tiling and floating mode
-bindsym  $mod+minus        floating toggle
-
-# Swap focus between the tiling area and the floating area
-bindsym  $mod+$alt+minus   focus mode_toggle
-
-# Switch the current container between different layout styles
-bindsym  $mod+s            layout stacking
-bindsym  $mod+w            layout tabbed
-bindsym  $mod+e            layout toggle split
-
-# move focus to the parent container
-bindsym  $mod+a            focus parent
-
-# Move your focus around
-bindsym  $mod+$left        focus left
-bindsym  $mod+$down        focus down
-bindsym  $mod+$up          focus up
-bindsym  $mod+$right       focus right
-
-# Move focused window
+## Move focused container
 bindsym  $mod+$alt+$left   move left
 bindsym  $mod+$alt+$down   move down
 bindsym  $mod+$alt+$up     move up
 bindsym  $mod+$alt+$right  move right
 
-# Resizing containers
+## Move focus to the parent container
+bindsym  $mod+a  focus parent
+
+## Switch the focused container between different layout styles
+bindsym  $mod+s  layout stacking
+bindsym  $mod+w  layout tabbed
+bindsym  $mod+e  layout toggle split
+
+## Make the focused container fullscreen
+bindsym  $mod+f  fullscreen
+
+## Split the focused container
+bindsym  $mod+b  splith
+bindsym  $mod+v  splitv
+
+## Toggle the focused container between tiling and floating mode
+bindsym  $mod+minus  floating toggle
+
+## Swap focus between the tiling area and the floating area
+bindsym  $mod+$alt+minus   focus mode_toggle
+
+## Resizing containers
 bindsym $mod+r mode "resize"
 mode "resize" {
-    bindsym $left resize shrink width 10 px or 10 ppt
-    bindsym $down resize grow height 10 px or 10 ppt
-    bindsym $up resize shrink height 10 px or 10 ppt
-    bindsym $right resize grow width 10 px or 10 ppt
+    bindsym  $left   resize  shrink  width   10 px or 10 ppt
+    bindsym  $down   resize  grow    height  10 px or 10 ppt
+    bindsym  $up     resize  shrink  height  10 px or 10 ppt
+    bindsym  $right  resize  grow    width   10 px or 10 ppt
 
-    # return to default mode
-    bindsym Escape mode "default"
+    ## return to default mode
+    bindsym  Escape  mode "default"
 }
 
-# kill focused window
-bindsym  $mod+q            kill
+## kill focused window
+bindsym  $mod+q  kill
 
-# Change workspace
-bindsym  $mod+p            exec swaymsg workspace $(lsws | $x-menu -p "→")
+## Change workspace
+bindsym  $mod+Tab  exec $s-ws-switch
 
-# Go to previous workspace
-bindsym  $mod+u            workspace back_and_forth
+## Go to previous workspace
+bindsym  $mod+u    workspace back_and_forth
 
-# Move container to workspace
-bindsym  $mod+$alt+p       exec swaymsg move container to workspace $(lsws | $x-menu -p "→")
+## Move container to workspace
+bindsym  $mod+$alt+Tab  exec $s-ws-move
 
-# lock the screen
-bindsym  XF86ScreenSaver   exec $x-lock
+## lock the screen
+bindsym  XF86ScreenSaver  exec $x-lock
 
-# volume control
-bindsym  XF86AudioRaiseVolume  exec $x-vol_up
-bindsym  XF86AudioLowerVolume  exec $x-vol_down
-bindsym  XF86AudioMute         exec $x-vol_mute
-bindsym  XF86AudioMicMute      exec $x-mic_mute
+## volume control
+bindsym  XF86AudioRaiseVolume  exec $x-vol-up
+bindsym  XF86AudioLowerVolume  exec $x-vol-down
+bindsym  XF86AudioMute         exec $x-vol-mute
+bindsym  XF86AudioMicMute      exec $x-mic-mute
 
-# Take a screenshot
-bindsym  Print             exec $x-grab
-bindsym  $alt+Print        exec $x-grab_cnt
+## Take a screenshot
+bindsym  Print       exec $x-grab
+bindsym  $alt+Print  exec $x-grab-cnt
 
-# start a terminal
-bindsym  $mod+Return       exec $x-terminal
+## Start a terminal
+bindsym  $mod+Return  exec $x-terminal
 
-# start your launcher
-bindsym  $mod+Space        exec $x-menu_run
+## Start launcher
+bindsym  $mod+Space  exec $x-menu-run
 
-# Drag floating windows by holding down $mod and left mouse button.
-# Resize them with right mouse button + $mod.
+## Drag floating windows by holding down $mod and left mouse button.
+## Resize them with right mouse button + $mod.
 floating_modifier  $mod  normal
+
 
 ###############################################################################
 ## STATUS BAR                                                                ##
 ###############################################################################
 
 bar {
-    output LVDS-1
-    position bottom
+    output    LVDS-1
+    position  bottom
 
-    mode hide
-    modifier $mod+x
+    ## The bar mode feature is not supported yet.
+    # mode      hide
+    # modifier  $mod+x
 
     font pango:DejaVu Sans Mono, Awesome 8
 
     colors {
-        statusline #ffffff
-        background #323232
-        inactive_workspace #32323200 #32323200 #5c5c5c
+        statusline          #ffffff
+        background          #323232
+        inactive_workspace  #32323200 #32323200 #5c5c5c
     }
 
-    status_command i3status
+    status_command  i3status
 }
+
 
 ###############################################################################
 ## AUTOSTART                                                                 ##
