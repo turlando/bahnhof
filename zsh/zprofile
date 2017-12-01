@@ -13,7 +13,7 @@ export SSH_AUTH_SOCK
 ## Wayland
 # Disabled because it breaks GTK3 in both Sway and OpenBox.
 # export GDK_BACKEND=wayland
-export CLUTTER_BACKEND=wayland
+# export CLUTTER_BACKEND=wayland
 # Disabled because it breaks Qt5 in both Sway and OpenBox.
 # export QT_QPA_PLATFORM=wayland-egl
 export ECORE_EVAS_ENGINE=wayland_egl
