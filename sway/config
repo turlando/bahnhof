@@ -14,8 +14,12 @@ set $right  l
 
 ## Applications
 set  $x-terminal  mate-terminal
-set  $x-menu-run  dmenu_run -b -fn DejaVuSans-10
-set  $x-menu      dmenu     -b -fn DejaVuSans-10
+set  $x-menu-run  dmenu_run -b -fn 'Source Code Pro Medium-9'   \
+                            -nb '#383C4A' -sb '#5294E2'         \
+                            -nf '#D3DAE3' -sf '#FFFFFF' -p ''
+set  $x-menu      dmenu     -b -fn 'Source Code Pro Medium-9'   \
+                            -nb '#383C4A' -sb '#5294E2'         \
+                            -nf '#D3DAE3' -sf '#FFFFFF' -p ''
 set  $x-lock      swaylock
 
 set  $x-vol-up    pamixer -i 5
@@ -27,19 +31,8 @@ set  $x-grab      swaygrab /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
 set  $x-grab-cnt  swaygrab -a /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
 
 ## Workspace operations
-set  $s-ws-switch  swaymsg workspace $(lsws | $x-menu -p "→")
-set  $s-ws-move    swaymsg move container to workspace $(lsws | $x-menu -p "→")
-
-
-###############################################################################
-## APPEARANCE                                                                ##
-###############################################################################
-
-## Font
-font  pango:DejaVuSans 11px
-
-## Get rid of title bars on applications.
-default_border  none
+set  $s-ws-switch  swaymsg workspace $(lsws | $x-menu)
+set  $s-ws-move    swaymsg move container to workspace $(lsws | $x-menu)
 
 
 ###############################################################################
@@ -86,7 +79,7 @@ bindsym  $mod+minus  floating toggle
 bindsym  $mod+$alt+minus   focus mode_toggle
 
 ## Resizing containers
-bindsym $mod+r mode "resize"
+bindsym  $mod+r  mode "resize"
 mode "resize" {
     bindsym  $left   resize  shrink  width   10 px or 10 ppt
     bindsym  $down   resize  grow    height  10 px or 10 ppt
@@ -134,6 +127,27 @@ floating_modifier  $mod  normal
 
 
 ###############################################################################
+## APPEARANCE                                                                ##
+###############################################################################
+
+## Font
+font  pango:Source Code Pro Medium 8
+
+## Colors
+# <class>          <bordr> <bg>    <text>  <indic> <chlbr>
+client.background  #2F343F
+client.focused     #5294E2 #5294E2 #FFFFFF #2B2E39 #2B2E39
+client.unfocused   #2F343F #2F343F #D3DAE3 #2B2E39 #2B2E39
+client.urgent      #F27835 #F27835 #D3DAE3 #2B2E39 #2B2E39
+
+## Get rid of title bars on applications.
+default_border  none
+
+## Hide borders adjacent to the screen edges.
+hide_edge_borders  both
+
+
+###############################################################################
 ## STATUS BAR                                                                ##
 ###############################################################################
 
@@ -145,12 +159,17 @@ bar {
     # mode      hide
     # modifier  $mod+x
 
-    font pango:DejaVu Sans Mono, Awesome 8
+    font pango:Source Code Pro Medium, Awesome 8
 
     colors {
-        statusline          #ffffff
-        background          #323232
-        inactive_workspace  #32323200 #32323200 #5c5c5c
+        background  #383C4A
+        statusline  #D3DAE3
+        separator   #D3DAE3
+
+        # <class>           <bordr> <bg>    <text>
+        focused_workspace   #5294E2 #5294E2 #FFFFFF
+        inactive_workspace  #383C4A #383C4A #D3DAE3
+        urgent_workspace    #F27835 #F27835 #D3DAE3
     }
 
     status_command  i3status
