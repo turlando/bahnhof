@@ -17,20 +17,27 @@ tlp
 tlp-rdw
 
 networkmanager
+
 pulseaudio
 pavucontrol
 
 sway
+i3status
 dmenu
 
 mate-terminal
+
 caja
 caja-open-terminal
+
 chromium
 thunderbird
-keepassxc
+hexchat
+
 sxiv
 evince
+
+keepassxc
 
 xcursor-neutral
 arc-gtk-theme
