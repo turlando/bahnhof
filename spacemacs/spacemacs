@@ -41,13 +41,15 @@ values."
 
      emacs-lisp
      python
+     java
      clojure
      elixir
-     sql
+     javascript
      react
 
      git
      markdown
+     sql
      )
 
    ;; List of additional packages that will be installed without being
