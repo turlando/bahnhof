@@ -39,6 +39,9 @@ values."
      ivy
      auto-completion
 
+     spell-checking
+     git
+
      emacs-lisp
      python
      java
@@ -47,10 +50,11 @@ values."
      javascript
      react
 
-     git
-     markdown
-     org
+     yaml
      sql
+     org
+
+     markdown
      )
 
    ;; List of additional packages that will be installed without being
