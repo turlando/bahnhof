@@ -43,6 +43,8 @@ values."
      git
 
      emacs-lisp
+     (c-c++ :variables
+            c-c++-enable-clang-support t)
      python
      java
      clojure
