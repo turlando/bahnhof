@@ -46,6 +46,7 @@ values."
      (c-c++ :variables
             c-c++-enable-clang-support t)
      python
+     scheme
      java
      clojure
      elixir
