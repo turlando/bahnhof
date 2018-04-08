@@ -38,10 +38,10 @@ values."
    '(
      ivy
      auto-completion
-
      spell-checking
-     colors
+
      git
+     colors
 
      emacs-lisp
      (c-c++ :variables
@@ -56,9 +56,12 @@ values."
 
      yaml
      sql
-     org
 
      markdown
+     org
+     latex
+
+     pdf-tools
      )
 
    ;; List of additional packages that will be installed without being
