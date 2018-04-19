@@ -9,4 +9,6 @@ p  = push
 r  = rebase
 ri = rebase -i
 s  = status
+sp = stash
+sP = stash pop
 u  = remote update
