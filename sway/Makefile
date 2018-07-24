@@ -5,7 +5,7 @@ all:  /home/$(USER)/.config/sway/config /home/$(USER)/.config/sway/autostart \
       /home/$(USER)/.local/bin/lsws \
       sway-reload
 
-/home/$(USER)/.config/sway/config: config
+/home/$(USER)/.config/sway/config: sway_config
 	install -o$(USER) -gusers -m664 -D $< $@
 
 /home/$(USER)/.config/sway/autostart: autostart
