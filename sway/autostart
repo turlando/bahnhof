@@ -1,1 +1,5 @@
-exec xss-lock -- /usr/bin/swaylock
+swayidle                                       \
+    timeout 60   swaylock                      \
+    timeout 300  'swaymsg "output * dpms off"' \
+    resume       'swaymsg "output * dpms on"'  \
+    before-sleep swaylock
