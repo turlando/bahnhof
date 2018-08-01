@@ -3,7 +3,7 @@ all: /etc/pulse/default.pa
 
 .PHONY: /etc/pulse/default.pa
 /etc/pulse/default.pa:
-	if grep moduke-switch-on-connect $@; then \
+	if grep module-switch-on-connect $@; then \
 	echo "" >>$@; \
 	echo "# Switch the output sound to the newly connected device" >>$@; \
 	echo "load-module module-switch-on-connect" >>$@; \
