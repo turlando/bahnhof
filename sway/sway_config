@@ -27,8 +27,7 @@ set  $x-vol-down  pamixer -d 5
 set  $x-vol-mute  pamixer -t
 set  $x-mic-mute  pactl set-source-mute 1 toggle
 
-set  $x-grab      swaygrab /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
-set  $x-grab-cnt  swaygrab -a /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
+set  $x-grab      grim /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
 
 ## Workspace operations
 set  $s-ws-switch  swaymsg workspace $(lsws | $x-menu)
