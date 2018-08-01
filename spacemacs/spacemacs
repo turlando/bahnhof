@@ -50,6 +50,7 @@ values."
      scheme
      java
      clojure
+     rust
      elixir
      javascript
      react
