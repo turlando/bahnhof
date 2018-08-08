@@ -1,7 +1,8 @@
 .PHONY: all
 all: /home/$(USER)/.config/systemd/user/ssh-agent.service \
-     /home/$(USER)/.zprofile \
-     ssh-agent-enable
+     /home/$(USER)/.zprofile                              \
+     ssh-agent-enable                                     \
+     ssh-agent-start
 
 /home/$(USER)/.config/systemd/user/ssh-agent.service: ssh-agent.service
 	install -o$(USER) -gusers -m664 -D $< $@
