@@ -19,6 +19,14 @@ all: /home/$(USER)/.config/systemd/user/ssh-agent.service \
 ssh-agent-enable:
 	systemctl --user enable ssh-agent.service
 
+.PHONY: ssh-agent-disable
+ssh-agent-disable:
+	systemctl --user disable ssh-agent.service
+
 .PHONY: ssh-agent-start
-ssh-agent-start: ssh-agent-enable
+ssh-agent-start:
 	systemctl --user start ssh-agent.service
+
+.PHONY: ssh-agent-stop
+ssh-agent-stop:
+	systemctl --user stop ssh-agent.service
