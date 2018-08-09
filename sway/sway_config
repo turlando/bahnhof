@@ -134,7 +134,7 @@ font  pango:Source Code Pro Medium 8
 
 ## Colors
 # <class>          <bordr> <bg>    <text>  <indic> <chlbr>
-client.background  #2F343F
+#client.background  #2F343F
 client.focused     #5294E2 #5294E2 #FFFFFF #2B2E39 #2B2E39
 client.unfocused   #2F343F #2F343F #D3DAE3 #2B2E39 #2B2E39
 client.urgent      #F27835 #F27835 #D3DAE3 #2B2E39 #2B2E39
