@@ -47,13 +47,15 @@ values."
      (c-c++ :variables
             c-c++-enable-clang-support t)
      python
-     scheme
-     java
-     clojure
-     rust
-     elixir
      javascript
      react
+     java
+     clojure
+     scheme
+     rust
+     erlang
+     elixir
+     haskell
 
      yaml
      sql
