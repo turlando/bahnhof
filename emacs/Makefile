@@ -2,7 +2,8 @@
 all: /home/$(USER)/.config/systemd/user/emacs.service \
      /home/$(USER)/.local/bin/ec                      \
      emacs-enable                                     \
-     emacs-start
+     emacs-stop                                       \
+     emacs-start                                      \
 
 /home/$(USER)/.config/systemd/user/emacs.service: emacs.service
 	install -o$(USER) -gusers -m664 -D $< $@
