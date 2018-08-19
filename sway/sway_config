@@ -13,7 +13,6 @@ set $up     k
 set $right  l
 
 ## Applications
-set  $x-terminal  mate-terminal
 set  $x-menu-run  dmenu_run -b -fn 'Source Code Pro Medium-9'   \
                             -nb '#383C4A' -sb '#5294E2'         \
                             -nf '#D3DAE3' -sf '#FFFFFF' -p ''
@@ -21,6 +20,8 @@ set  $x-menu      dmenu     -b -fn 'Source Code Pro Medium-9'   \
                             -nb '#383C4A' -sb '#5294E2'         \
                             -nf '#D3DAE3' -sf '#FFFFFF' -p ''
 set  $x-lock      swaylock
+set  $x-terminal  mate-terminal
+set  $x-emacs     ec
 
 set  $x-vol-up    pamixer -i 5
 set  $x-vol-down  pamixer -d 5
@@ -114,11 +115,14 @@ bindsym  XF86AudioMicMute      exec $x-mic-mute
 bindsym  Print       exec $x-grab
 bindsym  $alt+Print  exec $x-grab-cnt
 
+## Start launcher
+bindsym  $mod+Space  exec $x-menu-run
+
 ## Start a terminal
 bindsym  $mod+Return  exec $x-terminal
 
-## Start launcher
-bindsym  $mod+Space  exec $x-menu-run
+## Start Emacs
+bindsym  $mod+Backslash  exec $x-emacs
 
 ## Drag floating windows by holding down $mod and left mouse button.
 ## Resize them with right mouse button + $mod.
