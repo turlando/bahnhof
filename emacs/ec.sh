@@ -1,6 +1,6 @@
 #!/bin/sh
 set -eu
 
-emacsclient --create-frame "$@"
+emacsclient --create-frame "$@" &
 
 exit 0
