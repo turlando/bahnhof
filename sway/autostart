@@ -1,5 +1,25 @@
-exec swayidle                                       \
-         timeout 60   swaylock                      \
-         timeout 300  'swaymsg "output * dpms off"' \
-         resume       'swaymsg "output * dpms on"'  \
-         before-sleep swaylock
+exec swayidle                                  \
+    timeout 300  swaylock                      \
+    timeout 300  'swaymsg "output * dpms off"' \
+    resume       'swaymsg "output * dpms on"'  \
+    before-sleep swaylock
+
+workspace www
+workspace_layout tabbed
+exec firefox
+exec thunderbird
+
+workspace im
+workspace_layout default
+exec hexchat
+exec telegram-desktop
+
+workspace music
+workspace_layout default
+exec quodlibet
+
+workspace keys
+workspace_layout default
+exec keepassxc
+
+workspace www
