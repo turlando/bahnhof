@@ -1,27 +1,26 @@
 .PHONY: all
 all: /home/$(USER)/.config/systemd/user/emacs.service \
      /home/$(USER)/.local/bin/ec                      \
-     emacs-enable                                     \
-     emacs-stop                                       \
-     emacs-start                                      \
+     enable																						\
+     start
 
 /home/$(USER)/.config/systemd/user/emacs.service: emacs.service
 	install -o$(USER) -gusers -m664 -D $< $@
 
-.PHONY: emacs-enable
-emacs-enable:
+.PHONY: enable
+enable:
 	systemctl --user enable emacs.service
 
-.PHONY: emacs-disable
-emacs-disable:
+.PHONY: disable
+disable:
 	systemctl --user enable emacs.service
 
-.PHONY: emacs-start
-emacs-start:
+.PHONY: start
+start:
 	systemctl --user start emacs.service
 
-.PHONY: emacs-stop
-emacs-stop:
+.PHONY: stop
+stop:
 	systemctl --user stop emacs.service
 
 /home/$(USER)/.local/bin/ec: ec.sh
