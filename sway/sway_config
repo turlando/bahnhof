@@ -28,6 +28,10 @@ set  $x-vol-down  pamixer -d 5
 set  $x-vol-mute  pamixer -t
 set  $x-mic-mute  pactl set-source-mute 1 toggle
 
+set  $x-mp-play  mpctl play
+set  $x-mp-next  mpctl next
+set  $x-mp-prev  mpctl prev
+
 set  $x-grab      grim /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
 
 ## Workspace operations
@@ -110,6 +114,11 @@ bindsym  XF86AudioRaiseVolume  exec $x-vol-up
 bindsym  XF86AudioLowerVolume  exec $x-vol-down
 bindsym  XF86AudioMute         exec $x-vol-mute
 bindsym  XF86AudioMicMute      exec $x-mic-mute
+
+## media control
+bindsym  XF86AudioPlay  exec $x-mp-play
+bindsym  XF86AudioNext  exec $x-mp-next
+bindsym  XF86AudioPrev  exec $x-mp-prev
 
 ## Take a screenshot
 bindsym  Print       exec $x-grab
