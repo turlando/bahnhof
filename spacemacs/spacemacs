@@ -55,7 +55,8 @@ values."
      rust
      erlang
      elixir
-     haskell
+     (haskell :variables
+              haskell-enable-hindent-style "johan-tibell")
 
      yaml
      sql
