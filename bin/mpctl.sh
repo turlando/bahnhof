@@ -22,6 +22,9 @@ set -eu
 ##        b|prev|previous
 ##               Skip to previous track
 ##
+##        s|stop
+##               Stop playback
+##
 
 
 # Die if no arguments are provided.
@@ -38,6 +41,9 @@ case "${1:-}" in
         ;;
     b|prev|previous)
         COMMAND="Previous"
+        ;;
+    s|stop)
+        COMMAND="Stop"
         ;;
     *)
         exit 1

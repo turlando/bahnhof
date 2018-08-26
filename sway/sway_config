@@ -31,6 +31,7 @@ set  $x-mic-mute  pactl set-source-mute 1 toggle
 set  $x-mp-play  mpctl play
 set  $x-mp-next  mpctl next
 set  $x-mp-prev  mpctl prev
+set  $x-mp-stop  mpctl stop
 
 set  $x-grab      grim /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
 
@@ -119,6 +120,7 @@ bindsym  XF86AudioMicMute      exec $x-mic-mute
 bindsym  XF86AudioPlay  exec $x-mp-play
 bindsym  XF86AudioNext  exec $x-mp-next
 bindsym  XF86AudioPrev  exec $x-mp-prev
+bindsym  XF86AudioStop  exec $x-mp-stop
 
 ## Take a screenshot
 bindsym  Print       exec $x-grab
