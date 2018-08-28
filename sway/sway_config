@@ -104,6 +104,9 @@ bindsym  $mod+Tab  exec $s-ws-switch
 ## Go to previous workspace
 bindsym  $mod+u    workspace back_and_forth
 
+## Move container to previous workspace
+bindsym  $mod+$alt+u  move container to workspace back_and_forth
+
 ## Move container to workspace
 bindsym  $mod+$alt+Tab  exec $s-ws-move
 
