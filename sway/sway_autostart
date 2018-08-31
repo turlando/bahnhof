@@ -3,6 +3,7 @@ exec swayidle                                  \
     timeout 300  'swaymsg "output * dpms off"' \
     resume       'swaymsg "output * dpms on"'  \
     before-sleep swaylock
+exec twmnd
 
 workspace www
 workspace_layout tabbed
