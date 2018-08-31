@@ -1,6 +1,5 @@
 .PHONY: all
 all: /home/$(USER)/.config/systemd/user/emacs.service \
-     /home/$(USER)/.local/bin/ec                      \
      enable																						\
      start
 
@@ -22,6 +21,3 @@ start:
 .PHONY: stop
 stop:
 	systemctl --user stop emacs.service
-
-/home/$(USER)/.local/bin/ec: ec.sh
-	install -o$(USER) -gusers -m764 $< $@
