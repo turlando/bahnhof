@@ -13,3 +13,6 @@ export SSH_AUTH_SOCK
 ## Sway
 export XKB_DEFAULT_LAYOUT='it'
 export SWAY_CURSOR_THEME='Neutral'
+
+## Fix Java on Sway
+_JAVA_AWT_WM_NONREPARENTING=1
