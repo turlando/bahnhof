@@ -11,7 +11,6 @@ eval $(systemctl --user show-environment | grep SSH_AUTH_SOCK)
 export SSH_AUTH_SOCK
 
 ## Sway
-export XKB_DEFAULT_LAYOUT='it'
 export SWAY_CURSOR_THEME='Neutral'
 
 ## Fix Java on Sway
