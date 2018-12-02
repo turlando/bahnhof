@@ -36,7 +36,8 @@ This function should only modify configuration layer settings."
    '(
      ivy
      auto-completion
-     spell-checking
+     (spell-checking :variables
+                     spell-checking-enable-by-default nil)
 
      git
      colors
@@ -61,6 +62,7 @@ This function should only modify configuration layer settings."
      sql
 
      markdown
+     restructuredtext
      org
      latex
 
@@ -142,7 +144,7 @@ It should only modify the values of Spacemacs settings."
    ;; If non-nil then Spacelpa repository is the primary source to install
    ;; a locked version of packages. If nil then Spacemacs will install the
    ;; latest version of packages from MELPA. (default nil)
-   dotspacemacs-use-spacelpa nil
+   dotspacemacs-use-spacelpa t
 
    ;; If non-nil then verify the signature for downloaded Spacelpa archives.
    ;; (default nil)
