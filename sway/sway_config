@@ -33,10 +33,10 @@ set $up     k
 set $right  l
 
 ## Applications
-set  $x-menu-run  dmenu_run -b -fn 'Source Code Pro Medium-9'   \
+set  $x-menu-run  dmenu_run -b -h 20 -fn 'Lato Medium-9'   \
                             -nb '#383C4A' -sb '#5294E2'         \
                             -nf '#D3DAE3' -sf '#FFFFFF' -p ''
-set  $x-menu      dmenu     -b -fn 'Source Code Pro Medium-9'   \
+set  $x-menu      dmenu     -b -h 20 -fn 'Lato Medium-9'   \
                             -nb '#383C4A' -sb '#5294E2'         \
                             -nf '#D3DAE3' -sf '#FFFFFF' -p ''
 set  $x-lock      swaylock
@@ -53,7 +53,8 @@ set  $x-mp-next  mpctl next
 set  $x-mp-prev  mpctl prev
 set  $x-mp-stop  mpctl stop
 
-set  $x-grab      grim /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
+set  $x-grab     grim /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
+set  $x-grab-r   slurp | grim -g - /tmp/screenshot_$(date +%Y-%m-%d_%H:%M:%S).png
 
 ## Workspace operations
 set  $s-ws-switch  swaymsg workspace $(lsws | $x-menu)
@@ -147,7 +148,7 @@ bindsym  XF86AudioStop  exec $x-mp-stop
 
 ## Take a screenshot
 bindsym  Print       exec $x-grab
-bindsym  $alt+Print  exec $x-grab-cnt
+bindsym  $alt+Print  exec $x-grab-r
 
 ## Start launcher
 bindsym  $mod+Space  exec $x-menu-run
@@ -168,7 +169,7 @@ floating_modifier  $mod  normal
 ###############################################################################
 
 ## Font
-font  pango:Source Code Pro Medium 8
+font  pango:Lato Bold 8
 
 ## Colors
 # <class>          <bordr> <bg>    <text>  <indic> <chlbr>
@@ -191,12 +192,13 @@ hide_edge_borders  both
 bar {
     output    LVDS-1
     position  bottom
+    height    15px
 
     ## The bar mode feature is not supported yet.
     # mode      hide
     # modifier  $mod+x
 
-    font pango:Source Code Pro Medium, Awesome 8
+    font pango:Lato Medium, Awesome 8
 
     colors {
         background  #383C4A
