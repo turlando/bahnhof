@@ -33,11 +33,11 @@ set $up     k
 set $right  l
 
 ## Applications
-set  $x-menu-run  dmenu_run -b -h 20 -fn 'Lato Medium-9'   \
-                            -nb '#383C4A' -sb '#5294E2'         \
+set  $x-menu-run  dmenu_run -b -h 20 -fn 'Lato Medium-9'       \
+                            -nb '#383C4A' -sb '#5294E2'        \
                             -nf '#D3DAE3' -sf '#FFFFFF' -p ''
-set  $x-menu      dmenu     -b -h 20 -fn 'Lato Medium-9'   \
-                            -nb '#383C4A' -sb '#5294E2'         \
+set  $x-menu      dmenu     -b -h 20 -fn 'Lato Medium-9'       \
+                            -nb '#383C4A' -sb '#5294E2'        \
                             -nf '#D3DAE3' -sf '#FFFFFF' -p ''
 set  $x-lock      swaylock
 set  $x-terminal  mate-terminal
@@ -135,16 +135,16 @@ bindsym  $mod+$alt+Tab  exec $s-ws-move
 bindsym  XF86ScreenSaver  exec $x-lock
 
 ## volume control
-bindsym  XF86AudioRaiseVolume  exec $x-vol-up
-bindsym  XF86AudioLowerVolume  exec $x-vol-down
-bindsym  XF86AudioMute         exec $x-vol-mute
-bindsym  XF86AudioMicMute      exec $x-mic-mute
+bindsym  --locked  XF86AudioRaiseVolume  exec $x-vol-up
+bindsym  --locked  XF86AudioLowerVolume  exec $x-vol-down
+bindsym  --locked  XF86AudioMute         exec $x-vol-mute
+bindsym  --locked  XF86AudioMicMute      exec $x-mic-mute
 
 ## media control
-bindsym  XF86AudioPlay  exec $x-mp-play
-bindsym  XF86AudioNext  exec $x-mp-next
-bindsym  XF86AudioPrev  exec $x-mp-prev
-bindsym  XF86AudioStop  exec $x-mp-stop
+bindsym  --locked  XF86AudioPlay  exec $x-mp-play
+bindsym  --locked  XF86AudioNext  exec $x-mp-next
+bindsym  --locked  XF86AudioPrev  exec $x-mp-prev
+bindsym  --locked  XF86AudioStop  exec $x-mp-stop
 
 ## Take a screenshot
 bindsym  Print       exec $x-grab
@@ -183,6 +183,9 @@ default_border  none
 
 ## Hide borders adjacent to the screen edges.
 hide_edge_borders  both
+
+## Disable container dragging using the mouse.
+tiling_drag  disable
 
 
 ###############################################################################
