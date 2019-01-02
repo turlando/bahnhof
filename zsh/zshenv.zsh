@@ -7,11 +7,7 @@ export EDITOR='nvim'
 export BROWSER='firefox'
 
 ## ssh-agent
-eval $(systemctl --user show-environment | grep SSH_AUTH_SOCK)
-export SSH_AUTH_SOCK
-
-## Sway
-export SWAY_CURSOR_THEME='Neutral'
+export $(systemctl --user show-environment | grep SSH_AUTH_SOCK)
 
 ## Fix Java on Sway
 export _JAVA_AWT_WM_NONREPARENTING=1
