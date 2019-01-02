@@ -1,26 +1,37 @@
+###############################################################################
+## DAEMONS                                                                   ##
+###############################################################################
+
 exec swayidle                                  \
     timeout 300  swaylock                      \
     timeout 300  'swaymsg "output * dpms off"' \
     resume       'swaymsg "output * dpms on"'  \
     before-sleep swaylock
+
 exec twmnd
 
+
+###############################################################################
+## APPLICATIONS                                                              ##
+###############################################################################
+
 workspace www
-workspace_layout tabbed
+# layout tabbed
 exec firefox
 exec thunderbird
 
 workspace im
-workspace_layout default
+# layout splith
 exec hexchat
 exec telegram-desktop
+for_window [instance="telegram-desktop"] resize set width 350 px
 
 workspace music
-workspace_layout default
+# layout default
 exec quodlibet
 
 workspace keys
-workspace_layout default
+# layout default
 exec keepassxc
 
 workspace www
