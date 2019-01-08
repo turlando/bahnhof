@@ -1,7 +1,9 @@
 daemonize
 ignore-empty-password
 
-color=2F343F
+image=~/.local/share/backgrounds/default.jpg
+
+# color=2F343F
 bs-hl-color=2F343F
 key-hl-color=5294E2
 
