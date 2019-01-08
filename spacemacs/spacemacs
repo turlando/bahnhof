@@ -41,32 +41,27 @@ This function should only modify configuration layer settings."
 
      git
      colors
+     pdf
 
      emacs-lisp
      (c-c++ :variables
             c-c++-enable-clang-support t)
      python
      javascript
-     react
-     java
      clojure
-     scheme
-     rust
-     erlang
-     elixir
-     (haskell :variables
-              haskell-completion-backend 'intero
-              haskell-enable-hindent-style "johan-tibell")
+
+     ;; (haskell :variables
+     ;;          haskell-completion-backend 'intero
+     ;;          haskell-enable-hindent-style "johan-tibell")
 
      yaml
      sql
 
      markdown
-     restructuredtext
      org
      latex
 
-     pdf
+     docker
      )
 
    ;; List of additional packages that will be installed without being
