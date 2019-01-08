@@ -1,8 +1,8 @@
 .PHONY: all
-all:  /home/$(USER)/.zshenv /home/$(USER)/.zshrc
+all:  $(HOME)/.zshenv $(HOME)/.zshrc
 
-/home/$(USER)/.zshenv: zshenv.zsh
+$(HOME)/.zshenv: zshenv.zsh
 	install -o$(USER) -gusers -m664 $< $@
 
-/home/$(USER)/.zshrc: zshrc.zsh
+$(HOME)/.zshrc: zshrc.zsh
 	install -o$(USER) -gusers -m664 $< $@

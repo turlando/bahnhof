@@ -1,9 +1,7 @@
 .PHONY: all
-all: /home/$(USER)/.config/systemd/user/emacs.service \
-     enable																						\
-     start
+all: $(HOME)/.config/systemd/user/emacs.service
 
-/home/$(USER)/.config/systemd/user/emacs.service: emacs.service
+$(HOME)/.config/systemd/user/emacs.service: emacs.service
 	install -o$(USER) -gusers -m664 -D $< $@
 
 .PHONY: enable

@@ -1,5 +1,5 @@
 .PHONY: all
-all:  /home/$(USER)/.gitconfig
+all: $(HOME)/.gitconfig
 
-/home/$(USER)/.gitconfig: gitconfig
+$(HOME)/.gitconfig: gitconfig
 	install -o$(USER) -gusers -m664 $< $@

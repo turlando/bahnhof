@@ -1,5 +1,5 @@
 .PHONY: all
-all: /home/$(USER)/.spacemacs
+all: $(HOME)/.spacemacs
 
-/home/$(USER)/.spacemacs: spacemacs
+$(HOME)/.spacemacs: spacemacs
 	install -o$(USER) -gusers -m664 $< $@

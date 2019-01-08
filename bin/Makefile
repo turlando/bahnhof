@@ -1,25 +1,25 @@
 .PHONY: all
-all: /home/$(USER)/.local/bin/ec           \
-     /home/$(USER)/.local/bin/flac2mp3     \
-     /home/$(USER)/.local/bin/flacstripart \
-     /home/$(USER)/.local/bin/lsws         \
-     /home/$(USER)/.local/bin/mpctl        \
-     /home/$(USER)/.local/bin/winlegal
+all: $(HOME)/.local/bin/ec           \
+     $(HOME)/.local/bin/flac2mp3     \
+     $(HOME)/.local/bin/flacstripart \
+     $(HOME)/.local/bin/lsws         \
+     $(HOME)/.local/bin/mpctl        \
+     $(HOME)/.local/bin/winlegal
 
-/home/$(USER)/.local/bin/ec: ec.sh
+$(HOME)/.local/bin/ec: ec.sh
 	install -o$(USER) -gusers -m764 $< $@
 
-/home/$(USER)/.local/bin/flac2mp3: flac2mp3.sh
+$(HOME)/.local/bin/flac2mp3: flac2mp3.sh
 	install -o$(USER) -gusers -m764 $< $@
 
-/home/$(USER)/.local/bin/flacstripart: flacstripart.sh
+$(HOME)/.local/bin/flacstripart: flacstripart.sh
 	install -o$(USER) -gusers -m764 $< $@
 
-/home/$(USER)/.local/bin/lsws: lsws.sh
+$(HOME)/.local/bin/lsws: lsws.sh
 	install -o$(USER) -gusers -m764 -D $< $@
 
-/home/$(USER)/.local/bin/mpctl: mpctl.sh
+$(HOME)/.local/bin/mpctl: mpctl.sh
 	install -o$(USER) -gusers -m764 $< $@
 
-/home/$(USER)/.local/bin/winlegal: winlegal.sh
+$(HOME)/.local/bin/winlegal: winlegal.sh
 	install -o$(USER) -gusers -m764 $< $@

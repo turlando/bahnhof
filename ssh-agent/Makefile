@@ -1,9 +1,7 @@
 .PHONY: all
-all: /home/$(USER)/.config/systemd/user/ssh-agent.service \
-     enable																								\
-     start
+all: $(HOME)/.config/systemd/user/ssh-agent.service
 
-/home/$(USER)/.config/systemd/user/ssh-agent.service: ssh-agent.service
+$(HOME)/.config/systemd/user/ssh-agent.service: ssh-agent.service
 	install -o$(USER) -gusers -m664 -D $< $@
 
 .PHONY: enable
