@@ -2,7 +2,7 @@
 all: $(HOME)/.config/systemd/user/ssh-agent.service
 
 $(HOME)/.config/systemd/user/ssh-agent.service: ssh-agent.service
-	install -o$(USER) -gusers -m664 -D $< $@
+	install -D -o$(USER) -gusers -m664 -D $< $@
 
 .PHONY: enable
 enable:
