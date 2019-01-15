@@ -5,7 +5,8 @@ all: $(HOME)/.config/sway/config     \
      $(HOME)/.config/i3status/config \
      $(HOME)/.local/bin/lsws         \
      $(HOME)/.local/bin/menu         \
-     $(HOME)/.local/bin/scrot
+     $(HOME)/.local/bin/scrot        \
+     $(HOME)/.local/bin/mpctl
 
 $(HOME)/.config/sway/config: sway.conf
 	install -D -o$(USER) -gusers -m664 -D $< $@
@@ -27,6 +28,9 @@ $(HOME)/.local/bin/menu: menu.sh
 
 $(HOME)/.local/bin/scrot: scrot.sh
 	install -D -o$(USER) -gusers -m764 -D $< $@
+
+$(HOME)/.local/bin/mpctl: mpctl.sh
+	install -D -o$(USER) -gusers -m764 $< $@
 
 .PHONY: reload
 reload:

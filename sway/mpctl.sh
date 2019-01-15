@@ -3,7 +3,7 @@ set -eu
 
 ##
 ## NAME
-##        mpctl - Control MPRIS-enabled players
+##        mpctl - issue simple commands to QuodLibet through MPRIS interface
 ##
 ## SYNOPSIS
 ##        mpctl OPTIONS
