@@ -1,7 +1,6 @@
 .PHONY: all
 all: $(HOME)/.local/bin/flac2mp3     \
      $(HOME)/.local/bin/flacstripart \
-     $(HOME)/.local/bin/lsws         \
      $(HOME)/.local/bin/mpctl        \
      $(HOME)/.local/bin/winlegal
 
@@ -10,9 +9,6 @@ $(HOME)/.local/bin/flac2mp3: flac2mp3.sh
 
 $(HOME)/.local/bin/flacstripart: flacstripart.sh
 	install -D -o$(USER) -gusers -m764 $< $@
-
-$(HOME)/.local/bin/lsws: lsws.sh
-	install -D -o$(USER) -gusers -m764 -D $< $@
 
 $(HOME)/.local/bin/mpctl: mpctl.sh
 	install -D -o$(USER) -gusers -m764 $< $@
