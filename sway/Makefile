@@ -10,7 +10,7 @@ all: $(HOME)/.config/sway/config     \
 $(HOME)/.config/sway/config: sway.conf
 	install -D -o$(USER) -gusers -m664 -D $< $@
 
-$(HOME)/.config/sway/autostart: sway_autostart
+$(HOME)/.config/sway/autostart: autostart.conf
 	install -D -o$(USER) -gusers -m664 -D $< $@
 
 $(HOME)/.config/swaylock/config: swaylock.conf
