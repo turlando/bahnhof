@@ -9,6 +9,8 @@ set -eu
 ##        menu [-r]
 ##
 ## DESCRIPTION
+##        This script requires dmenu with the line-height patch.
+##
 ##        The stdin is redirected to dmenu.
 ##
 ##        -r
@@ -16,7 +18,7 @@ set -eu
 ##
 
 HEIGHT=20
-FONT='Lato Medium-9'
+FONT='Lato:style=Bold:size=8'
 PROMPT=''
 NORMAL_BACKGROUND='#383C4A'
 SELECT_BACKGROUND='#5294E2'
