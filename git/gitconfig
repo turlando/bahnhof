@@ -5,6 +5,7 @@ c  = commit
 cm = commit -m
 co = checkout
 cb = checkout -b
+d  = diff
 ds = diff --staged
 h  = log --graph --date=short --pretty=format:'%Cred%h%Creset %Cgreen%ad%Creset %s%d %Cblue%an%Creset'
 p  = push
