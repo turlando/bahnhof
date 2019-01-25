@@ -31,9 +31,9 @@ mate-terminal
 caja
 caja-open-terminal
 
+firefox
 chromium
 thunderbird
-hexchat
 
 sxiv
 evince
@@ -43,8 +43,14 @@ keepassxc
 xcursor-neutral
 arc-gtk-theme
 arc-icon-theme
-otf-overpass
+
+ttf-lato
+adobe-source-code-pro-fonts
 ttf-font-awesome
+
+hexchat
+pidgin
+telegram-desktop
 
 gnome-mpv
 quodlibet
