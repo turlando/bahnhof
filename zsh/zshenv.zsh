@@ -1,6 +1,9 @@
 ## PATH
 export PATH="$PATH:$HOME/.local/bin"
 
+## Compilers
+export FC='gfortran'
+
 ## Useful environment variables
 export PAGER='less'
 export EDITOR='nvim'
