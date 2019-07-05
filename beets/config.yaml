@@ -1,0 +1,86 @@
+---
+directory: ~/Music
+library: ~/Music/library.db
+
+paths:
+  default: $grouping/$albumartist/$real_year - $catalognum - $album/$disc_and_track. $title
+  comp: $grouping/Various Artists/$real_year - $catalognum - $album/$disc_and_track. $title
+
+import:
+  move: no
+  copy: yes
+
+plugins: discogs edit ftintitle zero inline info
+
+edit:
+  itemfields: >-
+    acoustid_fingerprint acoustid_id
+    added album albumartist
+    albumartist_credit albumartist_sort
+    albumdisambig albumstatus albumtype
+    arranger artist artist_credit
+    artist_sort asin bitdepth bitrate
+    bpm catalognum channels comments
+    comp composer composer_sort country
+    day disc disctitle disctotal encoder
+    filesize format genre grouping id
+    initial_key label language length
+    lyricist lyrics mb_albumartistid
+    mb_albumid mb_artistid mb_releasegroupid
+    mb_releasetrackid mb_trackid media
+    month mtime original_day original_month
+    original_year r128_album_gain
+    r128_track_gain rg_album_gain rg_album_peak
+    rg_track_gain rg_track_peak samplerate
+    script singleton title track tracktotal
+    year
+  albumfields: >-
+    added album albumartist albumartist_credit
+    albumartist_sort albumdisambig albumstatus
+    albumtotal albumtype artpath asin catalognum
+    comp country day disctotal genre label
+    language mb_albumartistid mb_albumid
+    mb_releasegroupid month original_day
+    original_month original_year path
+    r128_album_gain rg_album_gain rg_album_peak
+    script year
+
+ftintitle:
+  auto: yes
+  format: ; {0}
+
+zero:
+  auto: yes
+  fields: >-
+    acoustid_fingerprint acoustid_id
+    albumartist_credit albumartist_sort
+    artist_credit artist_sort arranger asin
+    barcode bpm
+    copyright comments composer composer_sort
+    disc discc
+    encodedby encoder
+    grouping
+    images initial_key isrc itunesadvisory
+    language lyricist length lyrics
+    mb_albumartistid mb_albumid mb_releasegroupid
+    musicbrainz_albumcomment musicbrainz_albumtype
+    musicbrainz_artistid musicbrainz_releasetrackid
+    musicbrainz_trackid
+    r128_album_gain r128_track_gain
+    rg_album_gain rg_album_peak
+    rg_track_gain rg_track_peak
+    r128_album_gain
+    rg_album_gain rg_album_peak
+    script
+    totaldiscs totaltracks track trackc
+    year
+  update_database: true
+
+item_fields:
+  disc_and_track: >-
+    "{0:01d}-{0:02d}".format(disc, track)
+    if disctotal > 1
+    else "{0:2d}".format(track)
+  real_year: >-
+    "{0:04d}".format(year if year != ''
+                     else original_year)
