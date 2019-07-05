@@ -1,9 +1,13 @@
-EMACS       := emacs
-EMACS_BATCH := $(EMACS) --no-init-file --no-site-file --batch
-EMACS_LOAD  := $(EMACS_BATCH) --load
+EMACS        := emacs
+EMACS_NOCONF := $(EMACS) --no-init-file --no-site-file
+EMACS_BATCH  := $(EMACS_NOCONF) --batch
 
 INIT_FILE   := init.el
 
 .PHONY: test
 test:
-	$(EMACS_LOAD) $(INIT_FILE)
+	$(EMACS_BATCH) --load $(INIT_FILE)
+
+.PHONY: run
+run:
+	$(EMACS_NOCONF) --load $(INIT_FILE)
