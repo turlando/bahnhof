@@ -5,11 +5,11 @@ import os
 import subprocess
 from socket import gethostname
 from threading import Thread
-from typing import Sequence, NamedTuple, Optional, Text
+from typing import Sequence, NamedTuple, Optional, Text, Dict
 
 
 #
-# Logging
+# Logging helpers
 #
 
 class AnsiCode(Enum):
@@ -20,13 +20,7 @@ class AnsiCode(Enum):
     CYAN = '\x1b[36m'
 
 
-LOG_LEVEL_TO_COLOR = {
-    logging.CRITICAL: AnsiCode.RED,
-    logging.ERROR: AnsiCode.RED,
-    logging.WARNING: AnsiCode.YELLOW,
-    logging.INFO: AnsiCode.GREEN,
-    logging.DEBUG: AnsiCode.CYAN
-}
+LogLevelToAnsiCode = Dict[int, AnsiCode]
 
 
 class AnsiLoggingStreamHandler(logging.StreamHandler):
@@ -34,23 +28,40 @@ class AnsiLoggingStreamHandler(logging.StreamHandler):
     def format(self, record: logging.LogRecord) -> Text:
         level = record.levelno
         text = super().format(record)
-        color = LOG_LEVEL_TO_COLOR[level].value
+        color = self.mapping[level].value
         return color + text + AnsiCode.DEFAULT.value
 
-
-LOG_FORMAT = "%(levelname)-7s %(message)s"
-
-logging.basicConfig(format=LOG_FORMAT,
-                    handlers=[AnsiLoggingStreamHandler()])
-
-log = logging.getLogger('provisioner')
-log.setLevel(logging.DEBUG)
+    # Overriding from logging.StreamHandler(Handler)
+    def __init__(self, mapping: LogLevelToAnsiCode):
+        self.mapping = mapping
+        super().__init__(stream=None)
 
 
 def pipe_to_logger(pipe, logger: logging.Logger, level: int):
     for line in io.TextIOWrapper(pipe):
         if (l := line.strip()):
             logger.log(level, l)
+
+
+#
+# Logging setup
+#
+
+LOG_FORMAT = "%(levelname)-7s %(message)s"
+
+LOG_LEVEL_TO_COLOR: LogLevelToAnsiCode = {
+    logging.CRITICAL: AnsiCode.RED,
+    logging.ERROR: AnsiCode.RED,
+    logging.WARNING: AnsiCode.YELLOW,
+    logging.INFO: AnsiCode.GREEN,
+    logging.DEBUG: AnsiCode.CYAN
+}
+
+logging.basicConfig(format=LOG_FORMAT,
+                    handlers=[AnsiLoggingStreamHandler(LOG_LEVEL_TO_COLOR)])
+
+log = logging.getLogger('provisioner')
+log.setLevel(logging.DEBUG)
 
 
 #
