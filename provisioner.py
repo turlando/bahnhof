@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 from socket import gethostname
 from threading import Thread
-from typing import Callable, Dict, NamedTuple, Optional, Sequence, Text
+from typing import Callable, Dict, Optional, Sequence, Text
 
 
 #
@@ -123,11 +123,18 @@ class Filesystem(Enum):
 PartitionSize = Optional[str]
 
 
-class Partition(NamedTuple):
+@dataclass
+class Partition:
     type: PartitionType
     filesystem: Filesystem
     size: PartitionSize
     label: str
+    luks_cipher: Optional[Text] = None
+    luks_key_size: Optional[int] = None
+    luks_passphrase: Optional[Text] = None
+
+
+Partitions = Sequence[Partition]
 
 
 def dev_path(dev, number):
@@ -169,15 +176,16 @@ def make_filesystem(path, partition: Partition):
                 path])
 
 
-def make_partitions(dev: str, partitions: Sequence[Partition]):
+def make_partitions(dev: str, partitions: Partitions):
     for number, partition in zip(range(1, len(partitions) + 1), partitions):
         sgdisk_new(dev, number, partition)
 
-        if (partition.type == PartitionType.LUKS
-            and partition.filesystem != Filesystem.SWAP):
+        if partition.type == PartitionType.LUKS:
             luks_format(dev_path(dev, number),
-                        'aes-xts-plain64', 256,
-                        'changeme')
+                        partition.luks_cipher, partition.luks_key_size,
+                        partition.luks_passphrase)
+
+    return True
 
 
 #
@@ -219,11 +227,18 @@ def execute_operations(operations: Operations):
 #
 
 DISK_PATH = '/dev/sda'
+LUKS_CIPHER = 'aes-xts-plain64'
+LUKS_KEY_SIZE = 256
+LUKS_PASSPHRASE = 'changeme'
 
-PARTITIONS: Sequence[Partition] = (
+PARTITIONS: Partitions = (
     Partition(PartitionType.EFI, Filesystem.FAT32, '512M', 'efi'),
-    Partition(PartitionType.LUKS, Filesystem.SWAP, '4G', 'swap'),
-    Partition(PartitionType.LUKS, Filesystem.EXT4, None, 'system')
+    Partition(PartitionType.LUKS, Filesystem.SWAP, '4G', 'swap',
+              luks_cipher=LUKS_CIPHER, luks_key_size=LUKS_KEY_SIZE,
+              luks_passphrase=LUKS_PASSPHRASE),
+    Partition(PartitionType.LUKS, Filesystem.EXT4, None, 'system',
+              luks_cipher=LUKS_CIPHER, luks_key_size=LUKS_KEY_SIZE,
+              luks_passphrase=LUKS_PASSPHRASE)
 )
 
 OPERATIONS: Operations = (
