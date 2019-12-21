@@ -27,15 +27,22 @@ def pipe_to_logger(pipe, logger: logging.Logger, level: int):
 # Shell commands execution.
 #
 
-def run(cmd: Iterable[str]):
+def run(cmd: Iterable[str], stdin: Optional[Iterable[str]] = None):
     log.debug("Executing: {}".format(" ".join(cmd)))
 
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    p = subprocess.Popen(cmd,
+                         stdout=subprocess.PIPE,
+                         stderr=subprocess.PIPE,
+                         stdin=subprocess.PIPE)
 
     outt = Thread(target=pipe_to_logger, args=[p.stdout, log, logging.DEBUG])
     errt = Thread(target=pipe_to_logger, args=[p.stderr, log, logging.WARNING])
     outt.start()
     errt.start()
+
+    if stdin is not None:
+        with p.stdin as f:
+            f.write('\n'.join(stdin).encode('ascii'))
 
     p.wait()
     outt.join()
@@ -112,6 +119,10 @@ class Partition(NamedTuple):
     label: str
 
 
+def dev_path(dev, number):
+    return "".join((dev, str(number)))
+
+
 def sgdisk_zap(dev):
     log.info('Erasing MBR and GPT data structures from {}.'.format(dev))
     run(['sgdisk', '--zap-all', dev])
@@ -126,19 +137,42 @@ def sgdisk_new_table(dev):
     return True
 
 
-def sgdisk_new(dev, partition):
+def sgdisk_new(dev, number, partition: Partition):
     run(['sgdisk',
-         ('--new=0:0:+{}'.format(partition.size)
+         ('--new={}:0:+{}'.format(number, partition.size)
           if partition.size is not None
-          else '--largest-new=0'),
-         '--typecode=0:{}'.format(partition.type.value),
-         '--change-name={}'.format(partition.label),
+          else '--largest-new={}'.format(number)),
+         '--typecode={}:{}'.format(number, partition.type.value),
+         '--change-name={}:{}'.format(number, partition.label),
          dev])
 
 
-def make_partitions(device: str, partitions: Iterable[Partition]):
-    for partition in partitions:
-        sgdisk_new(device, partition)
+def luks_format(path, cipher, key_size, passphrase):
+    run(['cryptsetup', 'luksFormat',
+         '--batch-mode',
+         '--align-payload=8192',
+         '--cipher={}'.format(cipher),
+         '--key-size={}'.format(key_size),
+         '--key-file=-',
+         path],
+        stdin=[passphrase])
+
+
+def make_filesystem(path, partition: Partition):
+    run([*partition.filesystem.value,
+         '-n', partition.label,
+         path])
+
+
+def make_partitions(dev: str, partitions: Iterable[Partition]):
+    for number, partition in zip(range(1, len(partitions) + 1), partitions):
+        sgdisk_new(dev, number, partition)
+
+        if (partition.type == PartitionType.LUKS
+            and partition.filesystem != Filesystem.SWAP):
+            luks_format(dev_path(dev, number),
+                        'aes-xts-plain64', 256,
+                        'changeme')
 
 
 #
