@@ -1,11 +1,12 @@
-from enum import Enum
 import io
 import logging
 import os
 import subprocess
+from dataclasses import dataclass
+from enum import Enum
 from socket import gethostname
 from threading import Thread
-from typing import Sequence, NamedTuple, Optional, Text, Dict
+from typing import Callable, Dict, NamedTuple, Optional, Sequence, Text
 
 
 #
@@ -104,38 +105,6 @@ def ping(host):
 
 
 #
-# Preliminary steps.
-#
-
-def check_archiso():
-    if gethostname() != 'archiso':
-        raise Exception("This is supposed to run inside the Arch live image.")
-    return True
-
-
-def check_efivars():
-    log.info("Checking EFI vars.")
-    if not os.path.isdir('/sys/firmware/efi/efivars'):
-        raise Exception("Could not find EFI vars.")
-    log.info("EFI vars OK.")
-    return True
-
-
-def check_network():
-    log.info("Checking network.")
-    ping('archlinux.org')
-    log.info("Network OK.")
-    return True
-
-
-def enable_ntp():
-    log.info("Enabling NTP.")
-    run(['timedatectl', 'set-ntp', 'true'])
-    log.info("NTP OK.")
-    return True
-
-
-#
 # Disk.
 #
 
@@ -166,44 +135,38 @@ def dev_path(dev, number):
 
 
 def sgdisk_zap(dev):
-    log.info("Erasing MBR and GPT data structures from {}.".format(dev))
-    run(['sgdisk', '--zap-all', dev])
-    log.info("Erasing OK.")
-    return True
+    return run(['sgdisk', '--zap-all', dev])
 
 
 def sgdisk_new_table(dev):
-    log.info("Creating new GPT table on {}.".format(dev))
-    run(['sgdisk', '--mbrtogpt', dev])
-    log.info("EFI table creation OK.")
-    return True
+    return run(['sgdisk', '--mbrtogpt', dev])
 
 
 def sgdisk_new(dev, number, partition: Partition):
-    run(['sgdisk',
-         ('--new={}:0:+{}'.format(number, partition.size)
-          if partition.size is not None
-          else '--largest-new={}'.format(number)),
-         '--typecode={}:{}'.format(number, partition.type.value),
-         '--change-name={}:{}'.format(number, partition.label),
-         dev])
+    return run(['sgdisk',
+                ('--new={}:0:+{}'.format(number, partition.size)
+                 if partition.size is not None
+                 else '--largest-new={}'.format(number)),
+                '--typecode={}:{}'.format(number, partition.type.value),
+                '--change-name={}:{}'.format(number, partition.label),
+                dev])
 
 
 def luks_format(path, cipher, key_size, passphrase):
-    run(['cryptsetup', 'luksFormat',
-         '--batch-mode',
-         '--align-payload=8192',
-         '--cipher={}'.format(cipher),
-         '--key-size={}'.format(key_size),
-         '--key-file=-',
-         path],
-        stdin=[passphrase])
+    return run(['cryptsetup', 'luksFormat',
+                '--batch-mode',
+                '--align-payload=8192',
+                '--cipher={}'.format(cipher),
+                '--key-size={}'.format(key_size),
+                '--key-file=-',
+                path],
+               stdin=[passphrase])
 
 
 def make_filesystem(path, partition: Partition):
-    run([*partition.filesystem.value,
-         '-n', partition.label,
-         path])
+    return run([*partition.filesystem.value,
+                '-n', partition.label,
+                path])
 
 
 def make_partitions(dev: str, partitions: Sequence[Partition]):
@@ -218,9 +181,44 @@ def make_partitions(dev: str, partitions: Sequence[Partition]):
 
 
 #
+# Operation
+#
+
+DEFAULT_SUCCESS_TEXT = "Success!"
+DEFAULT_FAILURE_TEXT = "Failed!"
+
+
+@dataclass
+class Operation:
+    description: Text
+    fn: Callable[[], bool]
+    success_text: Optional[Text] = None
+    failure_text: Optional[Text] = None
+
+
+Operations = Sequence[Operation]
+
+
+def execute_operations(operations: Operations):
+    for operation in operations:
+        log.info(operation.description)
+
+        success_text_ = (operation.success_text if operation.success_text
+                         else DEFAULT_SUCCESS_TEXT)
+        failure_text_ = (operation.failure_text if operation.failure_text
+                         else DEFAULT_FAILURE_TEXT)
+
+        if operation.fn():
+            log.info(success_text_)
+        else:
+            log.error(failure_text_)
+
+
+#
 # Main
 #
 
+DISK_PATH = '/dev/sda'
 
 PARTITIONS: Sequence[Partition] = (
     Partition(PartitionType.EFI, Filesystem.FAT32, '512M', 'efi'),
@@ -228,12 +226,25 @@ PARTITIONS: Sequence[Partition] = (
     Partition(PartitionType.LUKS, Filesystem.EXT4, None, 'system')
 )
 
+OPERATIONS: Operations = (
+    Operation("Check if running inside Arch live image.",
+              lambda: gethostname() == 'archiso',
+              failure_text="This is supposed to run inside the Arch live image."),
+    Operation("Check EFI variables.",
+              lambda: os.path.isdir('/sys/firmware/efi/efivars'),
+              failure_text="Your system doesn't seem to run in EFI mode."),
+    Operation("Check network availability.",
+              lambda: ping('archlinux.org')),
+    Operation("Enable NTP.",
+              lambda: run(['timedatectl', 'set-ntp', 'true'])),
+    Operation("Erasing MBR and GPT data structures from {}.".format(DISK_PATH),
+              lambda: sgdisk_zap(DISK_PATH)),
+    Operation("Creating new GPT table on {}.".format(DISK_PATH),
+              lambda: sgdisk_new_table(DISK_PATH)),
+    Operation("Create partitions.",
+              lambda: make_partitions(DISK_PATH, PARTITIONS))
+)
+
 
 if __name__ == '__main__':
-    check_archiso()
-    check_efivars()
-    check_network()
-    enable_ntp()
-    sgdisk_zap('/dev/sda')
-    sgdisk_new_table('/dev/sda')
-    make_partitions('/dev/sda', PARTITIONS)
+    execute_operations(OPERATIONS)
