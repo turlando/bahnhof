@@ -48,7 +48,7 @@ def pipe_to_logger(pipe, logger: logging.Logger, level: int):
 # Logging setup
 #
 
-LOG_FORMAT = "%(levelname)-7s %(message)s"
+LOG_FORMAT = "%(levelname).1s: %(message)s"
 
 LOG_LEVEL_COLOR: LogLevelToAnsiCode = {
     logging.CRITICAL: AnsiCode.RED,
