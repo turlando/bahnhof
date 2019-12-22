@@ -96,6 +96,15 @@ def run(cmd: Sequence[str], stdin: Optional[Sequence[str]] = None):
     return True
 
 
+def capture_run(cmd):
+    log.debug("Running: {}".format(' '.join(cmd)))
+    p = subprocess.run(cmd, capture_output=True)
+    stdout = p.stdout.decode()
+    for line in stdout.splitlines():
+        log.debug(line)
+    return stdout
+
+
 #
 # Network.
 #
@@ -277,6 +286,17 @@ def umount_partitions(base_path, dev, partitions: Partitions):
     return True
 
 
+def genfstab(base_mount_path):
+    return capture_run(['genfstab', '-U', base_mount_path])
+
+
+def generate_fstab(base_mount_path):
+    os.makedirs(base_mount_path + '/etc', exist_ok=True)
+    with open(base_mount_path + '/etc/fstab', mode='w') as f:
+        f.write(genfstab(base_mount_path))
+    return True
+
+
 #
 # Operation
 #
@@ -350,6 +370,8 @@ OPERATIONS: Operations = (
               lambda: make_partitions(DISK_PATH, PARTITIONS)),
     Operation("Mount filesystems.",
               lambda: mount_partitions(BASE_MOUNT_PATH, DISK_PATH, PARTITIONS)),
+    Operation("Generate fstab.",
+              lambda: generate_fstab(BASE_MOUNT_PATH)),
     Operation("Umount filesystems.",
               lambda: umount_partitions(BASE_MOUNT_PATH, DISK_PATH, PARTITIONS))
 )
