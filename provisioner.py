@@ -320,10 +320,8 @@ def execute_operations(operations: Operations):
     for operation in operations:
         log.info(operation.description)
 
-        success_text_ = (operation.success_text if operation.success_text
-                         else DEFAULT_SUCCESS_TEXT)
-        failure_text_ = (operation.failure_text if operation.failure_text
-                         else DEFAULT_FAILURE_TEXT)
+        success_text_ = operation.success_text or DEFAULT_SUCCESS_TEXT
+        failure_text_ = operation.failure_text or DEFAULT_FAILURE_TEXT
 
         if operation.fn():
             log.info(success_text_)
