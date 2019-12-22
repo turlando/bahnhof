@@ -70,7 +70,7 @@ log.setLevel(logging.DEBUG)
 #
 
 def run(cmd: Sequence[str], stdin: Optional[Sequence[str]] = None):
-    log.debug("Executing: {}".format(' '.join(cmd)))
+    log.debug("Running: {}".format(' '.join(cmd)))
 
     p = subprocess.Popen(cmd,
                          stdout=subprocess.PIPE,
@@ -120,6 +120,13 @@ class Filesystem(Enum):
     EXT4 = ['mkfs.ext4']
 
 
+MKFS_LABEL_SWITCH = {
+    Filesystem.SWAP: None,
+    Filesystem.FAT32: '-n',
+    Filesystem.EXT4: '-L'
+}
+
+
 PartitionSize = Optional[str]
 
 
@@ -129,6 +136,7 @@ class Partition:
     filesystem: Filesystem
     size: PartitionSize
     label: str
+    mount_point: Optional[Text] = None
     luks_cipher: Optional[Text] = None
     luks_key_size: Optional[int] = None
     luks_passphrase: Optional[Text] = None
@@ -139,6 +147,10 @@ Partitions = Sequence[Partition]
 
 def dev_path(dev, number):
     return "".join((dev, str(number)))
+
+
+def dev_mapper_path(name):
+    return "/dev/mapper/{}".format(name)
 
 
 def sgdisk_zap(dev):
@@ -170,10 +182,20 @@ def luks_format(path, cipher, key_size, passphrase):
                stdin=[passphrase])
 
 
-def make_filesystem(path, partition: Partition):
-    return run([*partition.filesystem.value,
-                '-n', partition.label,
-                path])
+def luks_open(path, name, passphrase):
+    return run(['cryptsetup', 'luksOpen', path, name],
+               stdin=[passphrase])
+
+
+def luks_close(name):
+    return run(['cryptsetup', 'luksClose', name])
+
+
+def make_filesystem(path, filesystem: Filesystem, label: Text):
+    label_switch = ([MKFS_LABEL_SWITCH[filesystem], label]
+                    if MKFS_LABEL_SWITCH[filesystem]
+                    else [])
+    return run([*filesystem.value, *label_switch, path])
 
 
 def make_partitions(dev: str, partitions: Partitions):
@@ -184,6 +206,15 @@ def make_partitions(dev: str, partitions: Partitions):
             luks_format(dev_path(dev, number),
                         partition.luks_cipher, partition.luks_key_size,
                         partition.luks_passphrase)
+            luks_open(dev_path(dev, number), partition.label,
+                      partition.luks_passphrase)
+            make_filesystem(dev_mapper_path(partition.label),
+                            partition.filesystem, partition.label)
+            luks_close(partition.label)
+        else:
+            make_filesystem(dev_path(dev, number),
+                            partition.filesystem,
+                            partition.label)
 
     return True
 
@@ -232,11 +263,11 @@ LUKS_KEY_SIZE = 256
 LUKS_PASSPHRASE = 'changeme'
 
 PARTITIONS: Partitions = (
-    Partition(PartitionType.EFI, Filesystem.FAT32, '512M', 'efi'),
+    Partition(PartitionType.EFI, Filesystem.FAT32, '512M', 'efi', '/boot'),
     Partition(PartitionType.LUKS, Filesystem.SWAP, '4G', 'swap',
               luks_cipher=LUKS_CIPHER, luks_key_size=LUKS_KEY_SIZE,
               luks_passphrase=LUKS_PASSPHRASE),
-    Partition(PartitionType.LUKS, Filesystem.EXT4, None, 'system',
+    Partition(PartitionType.LUKS, Filesystem.EXT4, None, 'system', '/',
               luks_cipher=LUKS_CIPHER, luks_key_size=LUKS_KEY_SIZE,
               luks_passphrase=LUKS_PASSPHRASE)
 )
