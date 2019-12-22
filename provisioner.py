@@ -136,7 +136,7 @@ class Partition:
     filesystem: Filesystem
     size: Optional[Text]
     label: Text
-    mount_point: Optional[Text] = None
+    mount_path: Optional[Text] = None
     luks_cipher: Optional[Text] = None
     luks_key_size: Optional[int] = None
     luks_passphrase: Optional[Text] = None
@@ -218,6 +218,65 @@ def make_partitions(dev: str, partitions: Partitions):
     return True
 
 
+def mount_partitions(base_path, dev, partitions: Partitions):
+    # Generate tuples of (partition_number, partition).
+    # Filter out partitions that are not required to be mounted
+    # (excluding swap devices).
+    # FIXME: Mount order is given by the len of the mount_path.
+    # Find a less lazy solution.
+    partitions_ = sorted([(number, partition) for number, partition
+                          in zip(range(1, len(partitions) + 1), partitions)
+                          if (partition.mount_path is not None
+                              or partition.filesystem == Filesystem.SWAP)],
+                         key=lambda x: (len(x[1].mount_path)
+                                        if x[1].mount_path is not None
+                                        else 0))
+
+    for number, partition in partitions_:
+        if partition.type == PartitionType.LUKS:
+            luks_open(dev_path(dev, number), partition.label,
+                      partition.luks_passphrase)
+
+        partition_path = (dev_mapper_path(partition.label)
+                          if partition.type == PartitionType.LUKS
+                          else dev_path(dev, number))
+
+        if partition.filesystem == Filesystem.SWAP:
+            run(['swapon', partition_path])
+        else:
+            mount_path = base_path + partition.mount_path
+            os.makedirs(mount_path, exist_ok=True)
+            run(['mount', partition_path, mount_path])
+
+    return True
+
+
+def umount_partitions(base_path, dev, partitions: Partitions):
+    partitions_ = sorted([(number, partition) for number, partition
+                          in zip(range(1, len(partitions) + 1), partitions)
+                          if (partition.mount_path is not None
+                              or partition.filesystem == Filesystem.SWAP)],
+                         key=lambda x: (len(x[1].mount_path)
+                                        if x[1].mount_path is not None
+                                        else 0),
+                         reverse=True)
+
+    for number, partition in partitions_:
+        partition_path = (dev_mapper_path(partition.label)
+                          if partition.type == PartitionType.LUKS
+                          else dev_path(dev, number))
+
+        if partition.filesystem == Filesystem.SWAP:
+            run(['swapoff', partition_path])
+        else:
+            run(['umount', partition_path])
+
+        if partition.type == PartitionType.LUKS:
+            luks_close(partition.label)
+
+    return True
+
+
 #
 # Operation
 #
@@ -260,6 +319,7 @@ DISK_PATH = '/dev/sda'
 LUKS_CIPHER = 'aes-xts-plain64'
 LUKS_KEY_SIZE = 256
 LUKS_PASSPHRASE = 'changeme'
+BASE_MOUNT_PATH = '/mnt'
 
 PARTITIONS: Partitions = (
     Partition(PartitionType.EFI, Filesystem.FAT32, '512M', 'efi', '/boot'),
@@ -287,7 +347,11 @@ OPERATIONS: Operations = (
     Operation("Creating new GPT table on {}.".format(DISK_PATH),
               lambda: sgdisk_new_table(DISK_PATH)),
     Operation("Create partitions.",
-              lambda: make_partitions(DISK_PATH, PARTITIONS))
+              lambda: make_partitions(DISK_PATH, PARTITIONS)),
+    Operation("Mount filesystems.",
+              lambda: mount_partitions(BASE_MOUNT_PATH, DISK_PATH, PARTITIONS)),
+    Operation("Umount filesystems.",
+              lambda: umount_partitions(BASE_MOUNT_PATH, DISK_PATH, PARTITIONS))
 )
 
 
