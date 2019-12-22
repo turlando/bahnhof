@@ -50,7 +50,7 @@ def pipe_to_logger(pipe, logger: logging.Logger, level: int):
 
 LOG_FORMAT = "%(levelname)-7s %(message)s"
 
-LOG_LEVEL_TO_COLOR: LogLevelToAnsiCode = {
+LOG_LEVEL_COLOR: LogLevelToAnsiCode = {
     logging.CRITICAL: AnsiCode.RED,
     logging.ERROR: AnsiCode.RED,
     logging.WARNING: AnsiCode.YELLOW,
@@ -59,7 +59,7 @@ LOG_LEVEL_TO_COLOR: LogLevelToAnsiCode = {
 }
 
 logging.basicConfig(format=LOG_FORMAT,
-                    handlers=[AnsiLoggingStreamHandler(LOG_LEVEL_TO_COLOR)])
+                    handlers=[AnsiLoggingStreamHandler(LOG_LEVEL_COLOR)])
 
 log = logging.getLogger('provisioner')
 log.setLevel(logging.DEBUG)
@@ -120,22 +120,22 @@ class Filesystem(Enum):
     EXT4 = ['mkfs.ext4']
 
 
-MKFS_LABEL_SWITCH = {
-    Filesystem.SWAP: None,
+FilesystemToMkfsLabelSwitch = Dict[Filesystem, Text]
+
+
+MKFS_LABEL_SWITCH: FilesystemToMkfsLabelSwitch = {
+    Filesystem.SWAP: '-L',
     Filesystem.FAT32: '-n',
     Filesystem.EXT4: '-L'
 }
-
-
-PartitionSize = Optional[str]
 
 
 @dataclass
 class Partition:
     type: PartitionType
     filesystem: Filesystem
-    size: PartitionSize
-    label: str
+    size: Optional[Text]
+    label: Text
     mount_point: Optional[Text] = None
     luks_cipher: Optional[Text] = None
     luks_key_size: Optional[int] = None
@@ -192,10 +192,9 @@ def luks_close(name):
 
 
 def make_filesystem(path, filesystem: Filesystem, label: Text):
-    label_switch = ([MKFS_LABEL_SWITCH[filesystem], label]
-                    if MKFS_LABEL_SWITCH[filesystem]
-                    else [])
-    return run([*filesystem.value, *label_switch, path])
+    return run([*filesystem.value,
+                MKFS_LABEL_SWITCH[filesystem], label,
+                path])
 
 
 def make_partitions(dev: str, partitions: Partitions):
