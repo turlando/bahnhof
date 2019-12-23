@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from enum import Enum
 from socket import gethostname
 from threading import Thread
-from typing import Callable, Dict, Optional, Sequence, Text
+from typing import Callable, Dict, Iterator, Optional, Sequence, Text
 
 
 #
@@ -106,15 +106,21 @@ def capture_run(cmd):
 
 
 #
-# Network.
+# Network
 #
 
 def ping(host):
     return run(['ping', '-c1', host])
 
 
+def set_hostname(base_mount_path, hostname):
+    with open(base_mount_path + '/etc/hostname', mode='w') as f:
+        f.write(hostname)
+    return True
+
+
 #
-# Disk.
+# Partition description
 #
 
 class PartitionType(Enum):
@@ -129,18 +135,8 @@ class Filesystem(Enum):
     EXT4 = ['mkfs.ext4']
 
 
-FilesystemToMkfsLabelSwitch = Dict[Filesystem, Text]
-
-
-MKFS_LABEL_SWITCH: FilesystemToMkfsLabelSwitch = {
-    Filesystem.SWAP: '-L',
-    Filesystem.FAT32: '-n',
-    Filesystem.EXT4: '-L'
-}
-
-
 @dataclass
-class Partition:
+class UnparsedPartition:
     type: PartitionType
     filesystem: Filesystem
     size: Optional[Text]
@@ -151,16 +147,64 @@ class Partition:
     luks_passphrase: Optional[Text] = None
 
 
+@dataclass
+class Partition:
+    dev_path: Text
+    number: int
+    path: Text
+    type: PartitionType
+    filesystem: Filesystem
+    label: Text
+    size: Optional[Text]
+    mount_path: Optional[Text] = None
+    luks_path: Optional[Text] = None
+    luks_cipher: Optional[Text] = None
+    luks_key_size: Optional[int] = None
+    luks_passphrase: Optional[Text] = None
+
+
 Partitions = Sequence[Partition]
 
 
-def dev_path(dev, number):
+def make_partition_path(dev, number):
     return "".join((dev, str(number)))
 
 
-def dev_mapper_path(name):
+def make_partition_mapper_path(name):
     return "/dev/mapper/{}".format(name)
 
+
+def parse_partitions(dev: Text, *unparseds: UnparsedPartition) -> Iterator[Partition]:
+    for number, partition in zip(range(1, len(unparseds) + 1),
+                                 unparseds):
+        yield Partition(
+            dev_path=dev,
+            number=number,
+            path=make_partition_path(dev, number),
+            type=partition.type,
+            filesystem=partition.filesystem,
+            label=partition.label,
+            size=partition.size,
+            mount_path=partition.mount_path,
+            luks_path=(make_partition_mapper_path(partition.label)
+                       if partition.label
+                       else None),
+            luks_cipher=partition.luks_cipher,
+            luks_key_size=partition.luks_key_size,
+            luks_passphrase=partition.luks_passphrase
+        )
+
+
+def get_root_partition(partitions: Partitions) -> Optional[Partition]:
+    for p in partitions:
+        if p.mount_path == '/':
+            return p
+    return None
+
+
+#
+# sgdisk helpers
+#
 
 def sgdisk_zap(dev):
     return run(['sgdisk', '--zap-all', dev])
@@ -170,17 +214,22 @@ def sgdisk_new_table(dev):
     return run(['sgdisk', '--mbrtogpt', dev])
 
 
-def sgdisk_new(dev, number, partition: Partition):
+def sgdisk_new(dev: Text, number: int, partition_type: PartitionType,
+               label: Text, size: Text = None):
     return run(['sgdisk',
-                ('--new={}:0:+{}'.format(number, partition.size)
-                 if partition.size is not None
+                ('--new={}:0:+{}'.format(number, size)
+                 if size is not None
                  else '--largest-new={}'.format(number)),
-                '--typecode={}:{}'.format(number, partition.type.value),
-                '--change-name={}:{}'.format(number, partition.label),
+                '--typecode={}:{}'.format(number, partition_type.value),
+                '--change-name={}:{}'.format(number, label),
                 dev])
 
 
-def luks_format(path, cipher, key_size, passphrase):
+#
+# LUKS helpers
+#
+
+def luks_format(path: Text, cipher: Text, key_size: int, passphrase: Text):
     return run(['cryptsetup', 'luksFormat',
                 '--batch-mode',
                 '--align-payload=8192',
@@ -191,64 +240,80 @@ def luks_format(path, cipher, key_size, passphrase):
                stdin=[passphrase])
 
 
-def luks_open(path, name, passphrase):
+def luks_open(path: Text, name: Text, passphrase: Text):
     return run(['cryptsetup', 'luksOpen', path, name],
                stdin=[passphrase])
 
 
-def luks_close(name):
+def luks_close(name: Text):
     return run(['cryptsetup', 'luksClose', name])
 
 
-def make_filesystem(path, filesystem: Filesystem, label: Text):
+#
+# mkfs helpers
+#
+
+
+FilesystemToMkfsLabelSwitch = Dict[Filesystem, Text]
+
+
+MKFS_LABEL_SWITCH: FilesystemToMkfsLabelSwitch = {
+    Filesystem.SWAP: '-L',
+    Filesystem.FAT32: '-n',
+    Filesystem.EXT4: '-L'
+}
+
+
+def make_filesystem(path: Text, filesystem: Filesystem, label: Text):
     return run([*filesystem.value,
                 MKFS_LABEL_SWITCH[filesystem], label,
                 path])
 
 
-def make_partitions(dev: str, partitions: Partitions):
-    for number, partition in zip(range(1, len(partitions) + 1), partitions):
-        sgdisk_new(dev, number, partition)
+#
+# Partitions actualization
+#
+
+def make_partitions(partitions: Partitions):
+    for partition in partitions:
+        sgdisk_new(partition.dev_path, partition.number,
+                   partition.type, partition.label, partition.size)
 
         if partition.type == PartitionType.LUKS:
-            luks_format(dev_path(dev, number),
+            luks_format(partition.path,
                         partition.luks_cipher, partition.luks_key_size,
                         partition.luks_passphrase)
-            luks_open(dev_path(dev, number), partition.label,
+            luks_open(partition.path, partition.label,
                       partition.luks_passphrase)
-            make_filesystem(dev_mapper_path(partition.label),
+            make_filesystem(partition.luks_path,
                             partition.filesystem, partition.label)
             luks_close(partition.label)
         else:
-            make_filesystem(dev_path(dev, number),
+            make_filesystem(partition.path,
                             partition.filesystem,
                             partition.label)
 
     return True
 
 
-def mount_partitions(base_path, dev, partitions: Partitions):
-    # Generate tuples of (partition_number, partition).
+def mount_partitions(base_path, partitions: Partitions):
     # Filter out partitions that are not required to be mounted
     # (excluding swap devices).
     # FIXME: Mount order is given by the len of the mount_path.
     # Find a less lazy solution.
-    partitions_ = sorted([(number, partition) for number, partition
-                          in zip(range(1, len(partitions) + 1), partitions)
+    partitions_ = sorted([partition for partition in partitions
                           if (partition.mount_path is not None
                               or partition.filesystem == Filesystem.SWAP)],
-                         key=lambda x: (len(x[1].mount_path)
-                                        if x[1].mount_path is not None
+                         key=lambda p: (len(p.mount_path)
+                                        if p.mount_path is not None
                                         else 0))
 
-    for number, partition in partitions_:
+    for partition in partitions_:
         if partition.type == PartitionType.LUKS:
-            luks_open(dev_path(dev, number), partition.label,
+            luks_open(partition.dev_path, partition.label,
                       partition.luks_passphrase)
 
-        partition_path = (dev_mapper_path(partition.label)
-                          if partition.type == PartitionType.LUKS
-                          else dev_path(dev, number))
+        partition_path = partition.luks_path or partition.path
 
         if partition.filesystem == Filesystem.SWAP:
             run(['swapon', partition_path])
@@ -260,20 +325,17 @@ def mount_partitions(base_path, dev, partitions: Partitions):
     return True
 
 
-def umount_partitions(base_path, dev, partitions: Partitions):
-    partitions_ = sorted([(number, partition) for number, partition
-                          in zip(range(1, len(partitions) + 1), partitions)
+def umount_partitions(base_path, partitions: Partitions):
+    partitions_ = sorted([partition for partition in partitions
                           if (partition.mount_path is not None
                               or partition.filesystem == Filesystem.SWAP)],
-                         key=lambda x: (len(x[1].mount_path)
-                                        if x[1].mount_path is not None
+                         key=lambda x: (len(x.mount_path)
+                                        if x.mount_path is not None
                                         else 0),
                          reverse=True)
 
-    for number, partition in partitions_:
-        partition_path = (dev_mapper_path(partition.label)
-                          if partition.type == PartitionType.LUKS
-                          else dev_path(dev, number))
+    for partition in partitions_:
+        partition_path = partition.luks_path or partition.path
 
         if partition.filesystem == Filesystem.SWAP:
             run(['swapoff', partition_path])
@@ -286,6 +348,10 @@ def umount_partitions(base_path, dev, partitions: Partitions):
     return True
 
 
+#
+# genfstab helpers
+#
+
 def genfstab(base_mount_path):
     return capture_run(['genfstab', '-U', base_mount_path])
 
@@ -295,6 +361,26 @@ def generate_fstab(base_mount_path):
     with open(base_mount_path + '/etc/fstab', mode='w') as f:
         f.write(genfstab(base_mount_path))
     return True
+
+
+#
+# EFISTUB
+#
+
+def startup_nsh(root_device, root_label, root_device_mapper):
+    return (' '
+            .join(["vmlinuz-linux", "rw",
+                   "initrd=initramfs-linux.img",
+                   "cryptdevice={root_device}:{root_label}",
+                   "root={root_device_mapper}"])
+            .format(root_device=root_device,
+                    root_label=root_label,
+                    root_device_mapper=root_device_mapper))
+
+
+def generate_startup_nsh(base_mount_path, dev, partitions):
+    file = base_mount_path + '/boot/startup.nsh'
+    pass
 
 
 #
@@ -334,19 +420,26 @@ def execute_operations(operations: Operations):
 #
 
 DISK_PATH = '/dev/sda'
+
 LUKS_CIPHER = 'aes-xts-plain64'
 LUKS_KEY_SIZE = 256
 LUKS_PASSPHRASE = 'changeme'
+
 BASE_MOUNT_PATH = '/mnt'
 
-PARTITIONS: Partitions = (
-    Partition(PartitionType.EFI, Filesystem.FAT32, '512M', 'efi', '/boot'),
-    Partition(PartitionType.LUKS, Filesystem.SWAP, '4G', 'swap',
-              luks_cipher=LUKS_CIPHER, luks_key_size=LUKS_KEY_SIZE,
-              luks_passphrase=LUKS_PASSPHRASE),
-    Partition(PartitionType.LUKS, Filesystem.EXT4, None, 'system', '/',
-              luks_cipher=LUKS_CIPHER, luks_key_size=LUKS_KEY_SIZE,
-              luks_passphrase=LUKS_PASSPHRASE)
+HOSTNAME = 'bahnhof'
+
+PARTITIONS: Partitions = parse_partitions(
+    DISK_PATH,
+    UnparsedPartition(PartitionType.EFI, Filesystem.FAT32, '512M',
+                      'efi', '/boot'),
+    UnparsedPartition(PartitionType.LUKS, Filesystem.SWAP, '4G', 'swap',
+                      luks_cipher=LUKS_CIPHER, luks_key_size=LUKS_KEY_SIZE,
+                      luks_passphrase=LUKS_PASSPHRASE),
+    UnparsedPartition(PartitionType.LUKS, Filesystem.EXT4, None,
+                      'system', '/',
+                      luks_cipher=LUKS_CIPHER, luks_key_size=LUKS_KEY_SIZE,
+                      luks_passphrase=LUKS_PASSPHRASE)
 )
 
 OPERATIONS: Operations = (
@@ -365,13 +458,15 @@ OPERATIONS: Operations = (
     Operation("Creating new GPT table on {}.".format(DISK_PATH),
               lambda: sgdisk_new_table(DISK_PATH)),
     Operation("Create partitions.",
-              lambda: make_partitions(DISK_PATH, PARTITIONS)),
+              lambda: make_partitions(PARTITIONS)),
     Operation("Mount filesystems.",
-              lambda: mount_partitions(BASE_MOUNT_PATH, DISK_PATH, PARTITIONS)),
+              lambda: mount_partitions(BASE_MOUNT_PATH, PARTITIONS)),
     Operation("Generate fstab.",
               lambda: generate_fstab(BASE_MOUNT_PATH)),
+    Operation("Set hostname.",
+              lambda: set_hostname(BASE_MOUNT_PATH, HOSTNAME)),
     Operation("Umount filesystems.",
-              lambda: umount_partitions(BASE_MOUNT_PATH, DISK_PATH, PARTITIONS))
+              lambda: umount_partitions(BASE_MOUNT_PATH, PARTITIONS))
 )
 
 
