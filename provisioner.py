@@ -1,12 +1,13 @@
 import io
 import logging
 import os
+import shutil
 import subprocess
 from dataclasses import dataclass
 from enum import Enum
 from socket import gethostname
 from threading import Thread
-from typing import Callable, Dict, Iterator, Optional, Sequence, Text
+from typing import Callable, Dict, Optional, Sequence, Text
 
 
 #
@@ -174,25 +175,28 @@ def make_partition_mapper_path(name):
     return "/dev/mapper/{}".format(name)
 
 
-def parse_partitions(dev: Text, *unparseds: UnparsedPartition) -> Iterator[Partition]:
-    for number, partition in zip(range(1, len(unparseds) + 1),
-                                 unparseds):
-        yield Partition(
-            dev_path=dev,
-            number=number,
-            path=make_partition_path(dev, number),
-            type=partition.type,
-            filesystem=partition.filesystem,
-            label=partition.label,
-            size=partition.size,
-            mount_path=partition.mount_path,
-            luks_path=(make_partition_mapper_path(partition.label)
-                       if partition.label
-                       else None),
-            luks_cipher=partition.luks_cipher,
-            luks_key_size=partition.luks_key_size,
-            luks_passphrase=partition.luks_passphrase
-        )
+def parse_partitions(dev: Text, *unparseds: UnparsedPartition) -> Partitions:
+    def _parse_partitions():
+        for number, partition in zip(range(1, len(unparseds) + 1),
+                                     unparseds):
+            yield Partition(
+                dev_path=dev,
+                number=number,
+                path=make_partition_path(dev, number),
+                type=partition.type,
+                filesystem=partition.filesystem,
+                label=partition.label,
+                size=partition.size,
+                mount_path=partition.mount_path,
+                luks_path=(make_partition_mapper_path(partition.label)
+                           if partition.type == PartitionType.LUKS
+                           else None),
+                luks_cipher=partition.luks_cipher,
+                luks_key_size=partition.luks_key_size,
+                luks_passphrase=partition.luks_passphrase
+            )
+
+    return tuple(_parse_partitions())
 
 
 def get_root_partition(partitions: Partitions) -> Optional[Partition]:
@@ -200,6 +204,11 @@ def get_root_partition(partitions: Partitions) -> Optional[Partition]:
         if p.mount_path == '/':
             return p
     return None
+
+
+def get_first_swap_partition(partitions: Partitions) -> Optional[Partition]:
+    return [p for p in partitions
+            if p.filesystem == Filesystem.SWAP][0]
 
 
 #
@@ -310,7 +319,7 @@ def mount_partitions(base_path, partitions: Partitions):
 
     for partition in partitions_:
         if partition.type == PartitionType.LUKS:
-            luks_open(partition.dev_path, partition.label,
+            luks_open(partition.path, partition.label,
                       partition.luks_passphrase)
 
         partition_path = partition.luks_path or partition.path
@@ -367,20 +376,116 @@ def generate_fstab(base_mount_path):
 # EFISTUB
 #
 
-def startup_nsh(root_device, root_label, root_device_mapper):
+# TODO: This will not work with an unencrypted install.
+def startup_nsh(root_device, root_label, root_device_mapper, swap_device):
     return (' '
             .join(["vmlinuz-linux", "rw",
                    "initrd=initramfs-linux.img",
                    "cryptdevice={root_device}:{root_label}",
-                   "root={root_device_mapper}"])
+                   "root={root_device_mapper}",
+                   "resume={swap_device}"])
             .format(root_device=root_device,
                     root_label=root_label,
-                    root_device_mapper=root_device_mapper))
+                    root_device_mapper=root_device_mapper,
+                    swap_device=swap_device))
 
 
-def generate_startup_nsh(base_mount_path, dev, partitions):
+def generate_startup_nsh(base_mount_path, partitions):
     file = base_mount_path + '/boot/startup.nsh'
-    pass
+    root_partition = get_root_partition(partitions)
+    swap_partition = get_first_swap_partition(partitions)
+
+    with open(file, mode='w') as f:
+        f.write(startup_nsh(root_partition.path,
+                            root_partition.label,
+                            root_partition.luks_path,
+                            swap_partition.luks_path or swap_partition.path))
+
+    return True
+
+
+#
+# initramfs
+#
+
+
+def create_hook(base_mount_path, name, description, script):
+    hook_file = base_mount_path + '/etc/initcpio/hooks/' + name
+    install_file = base_mount_path + '/etc/initcpio/install/' + name
+
+    with open(hook_file, mode='w') as f:
+        f.write("run_hook() {\n")
+        for l in script:
+            f.write(l + "\n")
+        f.write("}")
+
+    with open(install_file, mode='w') as f:
+        f.write("build() {\n")
+        f.write("add_runscript\n")
+        f.write("}\n\n")
+        f.write("help(){\n")
+        f.write("cat<<HEREDOC\n")
+        f.write("\n".join(description) + "\n")
+        f.write("HEREDOC\n")
+        f.write("}")
+
+    return True
+
+
+def create_cryptswap_hook(base_mount_path, partitions: Partitions):
+    partitions_ = [p for p in partitions
+                   if p.type == PartitionType.LUKS
+                   and p.filesystem == Filesystem.SWAP]
+
+    create_hook(base_mount_path, 'cryptswap',
+                "Open encrypted swap partitions.",
+                ["cryptsetup open /dev/{path} {label}".format(path=partition.path,
+                                                              label=partition.label)
+                 for partition in partitions_])
+
+    return True
+
+
+def mkinitcpio_conf(modules: Optional[Sequence[Text]] = None,
+                    binaries: Optional[Sequence[Text]] = None,
+                    files: Optional[Sequence[Text]] = None,
+                    hooks: Optional[Sequence[Text]] = None,
+                    compression: Optional[Text] = 'gzip'):
+    return ('MODULES="{}"\n'
+            'BINARIES="{}"\n'
+            'FILES="{}"\n'
+            'HOOKS="{}"\n'
+            'COMPRESSION="{}"').format(' '.join(modules) if modules else '',
+                                       ' '.join(binaries) if binaries else '',
+                                       ' '.join(files) if files else '',
+                                       ' '.join(hooks) if hooks else '',
+                                       compression)
+
+
+def generate_mkinitcpio_conf(base_mount_path, make_backup=True, **kwargs):
+    file = base_mount_path + '/etc/mkinitcpio.conf'
+    back_file = file + '.bak'
+
+    if make_backup:
+        shutil.copy2(file, back_file)
+
+    with open(file, mode='w') as f:
+        f.write(mkinitcpio_conf(**kwargs))
+
+    return True
+
+
+#
+# Users and groups
+#
+
+def passwd(username, password, chroot=None):
+    if chroot:
+        return run(['arch-chroot', chroot, 'chpasswd'],
+               stdin=["{}:{}".format(username, password)])
+    else:
+        return run(['chpasswd'],
+               stdin=["{}:{}".format(username, password)])
 
 
 #
@@ -429,6 +534,8 @@ BASE_MOUNT_PATH = '/mnt'
 
 HOSTNAME = 'bahnhof'
 
+ROOT_PASSWORD = 'changeme'
+
 PARTITIONS: Partitions = parse_partitions(
     DISK_PATH,
     UnparsedPartition(PartitionType.EFI, Filesystem.FAT32, '512M',
@@ -461,10 +568,26 @@ OPERATIONS: Operations = (
               lambda: make_partitions(PARTITIONS)),
     Operation("Mount filesystems.",
               lambda: mount_partitions(BASE_MOUNT_PATH, PARTITIONS)),
+    Operation("Install base packages.",
+              lambda: run(['pacstrap', BASE_MOUNT_PATH, 'base', 'linux'])),
     Operation("Generate fstab.",
               lambda: generate_fstab(BASE_MOUNT_PATH)),
     Operation("Set hostname.",
               lambda: set_hostname(BASE_MOUNT_PATH, HOSTNAME)),
+    Operation("Add cryptswap initramfs hook.",
+              lambda: create_cryptswap_hook(BASE_MOUNT_PATH, PARTITIONS)),
+    Operation("Setup mkinitcpio.",
+              lambda: generate_mkinitcpio_conf(
+                  BASE_MOUNT_PATH,
+                  hooks=['base', 'udev', 'autodetect', 'modconf',
+                          'block', 'encrypt', 'cryptswap', 'resume',
+                          'filesystems', 'keyboard', 'fsck'])),
+    Operation("Generate initramfs.",
+              lambda: run(['arch-chroot', BASE_MOUNT_PATH, 'mkinitcpio', '-P'])),
+    Operation("Setup EFISTUB.",
+              lambda: generate_startup_nsh(BASE_MOUNT_PATH, PARTITIONS)),
+    Operation("Set root password.",
+              lambda: passwd('root', ROOT_PASSWORD, chroot=BASE_MOUNT_PATH)),
     Operation("Umount filesystems.",
               lambda: umount_partitions(BASE_MOUNT_PATH, PARTITIONS))
 )
