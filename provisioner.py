@@ -439,8 +439,8 @@ def create_cryptswap_hook(base_mount_path, partitions: Partitions):
 
     create_hook(base_mount_path, 'cryptswap',
                 "Open encrypted swap partitions.",
-                ["cryptsetup open /dev/{path} {label}".format(path=partition.path,
-                                                              label=partition.label)
+                ["cryptsetup open {path} {label}".format(path=partition.path,
+                                                         label=partition.label)
                  for partition in partitions_])
 
     return True
@@ -480,12 +480,19 @@ def generate_mkinitcpio_conf(base_mount_path, make_backup=True, **kwargs):
 #
 
 def passwd(username, password, chroot=None):
-    if chroot:
-        return run(['arch-chroot', chroot, 'chpasswd'],
-               stdin=["{}:{}".format(username, password)])
-    else:
-        return run(['chpasswd'],
-               stdin=["{}:{}".format(username, password)])
+        return run([*(['arch-chroot', chroot] if chroot else []),
+                    'chpasswd'],
+                   stdin=["{}:{}".format(username, password)])
+
+
+def adduser(username, password, chroot=None):
+    return run([*(['arch-chroot', chroot] if chroot else []),
+                'useradd',
+                '-m',
+                '-N', '-g', 'users',
+                '-G', 'wheel,audio',
+                '-p', password,
+                username])
 
 
 #
@@ -525,16 +532,38 @@ def execute_operations(operations: Operations):
 #
 
 DISK_PATH = '/dev/sda'
+BASE_MOUNT_PATH = '/mnt'
 
 LUKS_CIPHER = 'aes-xts-plain64'
 LUKS_KEY_SIZE = 256
 LUKS_PASSPHRASE = 'changeme'
 
-BASE_MOUNT_PATH = '/mnt'
-
 HOSTNAME = 'bahnhof'
-
 ROOT_PASSWORD = 'changeme'
+
+PACKAGES = ['tp_smapi', 'acpi_call',
+            'tlp', 'tlp-rdw',
+            'zsh', 'grml-zsh-config',
+            'sudo',
+            'neovim',
+            'make', 'gcc', 'binutils', 'pkg-config', 'fakeroot',
+            'networkmanager', 'dhcpcd',
+            'pulseaudio', 'pavucontrol',
+            'sway', 'dmenu',
+            'xcursor-neutral', 'arc-gtk-theme', 'arc-icon-theme',
+            'ttf-lato', 'adobe-source-code-pro-fonts',
+            'mate-terminal',
+            'caja', 'caja-open-terminal',
+            'sxiv', 'evince',
+            'firefox', 'thunderbird',
+            'keepassxc',
+            'hexchat', 'pidgin', 'telegram-desktop',
+            'celluloid', 'quodlibet']
+
+
+USERNAME = 'tancredi'
+PASSWORD = 'changeme'
+
 
 PARTITIONS: Partitions = parse_partitions(
     DISK_PATH,
@@ -588,6 +617,10 @@ OPERATIONS: Operations = (
               lambda: generate_startup_nsh(BASE_MOUNT_PATH, PARTITIONS)),
     Operation("Set root password.",
               lambda: passwd('root', ROOT_PASSWORD, chroot=BASE_MOUNT_PATH)),
+    Operation("Install extra packages.",
+              lambda: run(['pacstrap', BASE_MOUNT_PATH, *PACKAGES])),
+    Operation("Setup user.",
+              lambda: adduser(USERNAME, PASSWORD, chroot=BASE_MOUNT_PATH)),
     Operation("Umount filesystems.",
               lambda: umount_partitions(BASE_MOUNT_PATH, PARTITIONS))
 )
