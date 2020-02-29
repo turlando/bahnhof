@@ -49,6 +49,7 @@ This function should only modify configuration layer settings."
      python
      javascript
      clojure
+     erlang
 
      ;; (haskell :variables
      ;;          haskell-completion-backend 'intero
