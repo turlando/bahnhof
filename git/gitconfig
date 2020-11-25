@@ -9,7 +9,7 @@ d  = diff
 ds = diff --staged
 h  = log --graph --date=short --pretty=format:'%Cred%h%Creset %Cgreen%ad%Creset %s%d %Cblue%an%Creset'
 pl = pull --ff-only
-ps = push --ff-only
+ps = push
 r  = rebase
 ri = rebase -i
 s  = status
