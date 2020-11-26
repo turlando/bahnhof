@@ -8,6 +8,7 @@ cb = checkout -b
 d  = diff
 ds = diff --staged
 h  = log --graph --date=short --pretty=format:'%Cred%h%Creset %Cgreen%ad%Creset %s%d %Cblue%an%Creset'
+m  = merge --ff-only
 pl = pull --ff-only
 ps = push
 r  = rebase
