@@ -8,8 +8,8 @@ cb = checkout -b
 d  = diff
 ds = diff --staged
 h  = log --graph --date=short --pretty=format:'%Cred%h%Creset %Cgreen%ad%Creset %s%d %Cblue%an%Creset'
-m  = merge --ff-only
-pl = pull --ff-only
+m  = merge
+pl = pull
 ps = push
 r  = rebase
 ri = rebase -i
@@ -17,3 +17,9 @@ s  = status
 st = stash
 sp = stash pop
 u  = remote update
+
+[merge]
+ff = only
+
+[pull]
+ff = only
