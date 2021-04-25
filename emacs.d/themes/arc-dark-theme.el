@@ -52,7 +52,7 @@
                         (((class color) (background dark)) (:background "red1")) (t (:inverse-video t))))
  '(font-lock-builtin-face ((t (:foreground "#569cd6"))))
  '(font-lock-comment-delimiter-face ((default (:inherit (font-lock-comment-face)))))
- '(font-lock-comment-face ((t (:foreground "#5C6370"))))
+ '(font-lock-comment-face ((t (:foreground "#2a96a3"))))
  '(font-lock-constant-face ((t (:foreground "#569cd6"))))
  '(font-lock-doc-face ((t (:inherit (font-lock-string-face)))))
  '(font-lock-function-name-face ((t (:foreground "#dcdcaa"))))
