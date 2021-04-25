@@ -1,4 +1,4 @@
-;;; -*- lexical-binding: t -*-
+;;; appearance.el --- UI tweaks                       -*- lexical-binding: t -*-
 
 ;; Disable scroll bars.
 (scroll-bar-mode -1)
@@ -16,4 +16,11 @@
 (setq inhibit-startup-screen t)
 
 ;; Set font.
-(set-frame-font "Source Code Pro 10" nil t)
+(set-face-attribute 'default nil :font "Source Code Pro" :height 100)
+
+;; Load theme
+(load-theme 'arc-dark t)
+
+
+(provide 'appearance)
+;;; appearance.el ends here

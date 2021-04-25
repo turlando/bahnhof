@@ -1,4 +1,6 @@
-;;; -*- lexical-binding: t -*-
+;;; init.el --- Configuration entrypoint              -*- lexical-binding: t -*-
+
+;;; Paths definitions
 
 ;; Emacs config directory path.
 ;;
@@ -12,4 +14,19 @@
 ;; to the directory holding the init.el file.
 (setq bahnhof-user-emacs-directory (file-name-directory load-file-name))
 
-(load (expand-file-name "ui.el" bahnhof-user-emacs-directory))
+;; Custom load path.
+(setq bahnhof-load-path (expand-file-name "lisp" bahnhof-user-emacs-directory))
+
+;; Custom themes path.
+(setq bahnhof-themes-path (expand-file-name "themes" bahnhof-user-emacs-directory))
+
+;;; Paths configuration
+
+(add-to-list 'load-path bahnhof-load-path)
+(add-to-list 'custom-theme-load-path bahnhof-themes-path)
+
+;;; Import submodules
+
+(require 'appearance)
+
+;;; init.el ends here

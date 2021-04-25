@@ -2,7 +2,7 @@ EMACS        := emacs
 EMACS_NOCONF := $(EMACS) --no-init-file --no-site-file
 EMACS_BATCH  := $(EMACS_NOCONF) --batch
 
-INIT_FILE   := init.el
+INIT_FILE    := init.el
 
 .PHONY: test
 test:
