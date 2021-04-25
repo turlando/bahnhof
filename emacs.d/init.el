@@ -17,13 +17,8 @@
 ;; Custom load path.
 (setq bahnhof-load-path (expand-file-name "lisp" bahnhof-user-emacs-directory))
 
-;; Custom themes path.
-(setq bahnhof-themes-path (expand-file-name "themes" bahnhof-user-emacs-directory))
-
 ;;; Paths configuration
-
 (add-to-list 'load-path bahnhof-load-path)
-(add-to-list 'custom-theme-load-path bahnhof-themes-path)
 
 ;;; Import submodules
 

@@ -1,5 +1,7 @@
 ;;; bahnhof-appearance.el                             -*- lexical-binding: t -*-
 
+;;; Disable default UI components
+
 ;; Disable scroll bars.
 (scroll-bar-mode -1)
 
@@ -15,11 +17,27 @@
 ;; Don't show *GNU Emacs* buffer at startup.
 (setq inhibit-startup-screen t)
 
-;; Set font.
-(set-face-attribute 'default nil :font "Source Code Pro" :height 100)
 
-;; Load theme
-(load-theme 'arc-dark t)
+;;; Theme
+
+;; Install theme
+(use-package spacemacs-theme
+  :defer t ; otherwise it will load spacemacs-theme which does not exist
+  :init (load-theme 'spacemacs-dark t))
+
+
+;;; Font
+
+;; Set font.
+(set-face-attribute 'default nil
+                    :font "Source Code Pro"
+                    :height 100)
+
+
+;;; Mode line
+
+;; Show column number in the mode line
+(column-number-mode)
 
 
 (provide 'bahnhof-appearance)
