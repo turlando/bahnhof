@@ -27,6 +27,7 @@
 
 ;;; Import submodules
 
+(require 'packaging)
 (require 'appearance)
 
 ;;; init.el ends here
