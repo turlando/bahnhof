@@ -27,7 +27,7 @@
 
 ;;; Import submodules
 
-(require 'packaging)
-(require 'appearance)
+(require 'bahnhof-packaging)
+(require 'bahnhof-appearance)
 
 ;;; init.el ends here

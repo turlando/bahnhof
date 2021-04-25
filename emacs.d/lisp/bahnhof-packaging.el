@@ -1,4 +1,4 @@
-;;; packaging.el --- Packaging configuration          -*- lexical-binding: t -*-
+;;; bahnhof-packaging.el                              -*- lexical-binding: t -*-
 
 ;;; Package sources
 
@@ -26,5 +26,5 @@
 (setq use-package-always-ensure t)
 
 
-(provide 'packaging)
-;;; packaging.el ends here
+(provide 'bahnhof-packaging)
+;;; bahnhof-packaging.el ends here

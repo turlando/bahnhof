@@ -1,4 +1,4 @@
-;;; appearance.el --- UI tweaks                       -*- lexical-binding: t -*-
+;;; bahnhof-appearance.el                             -*- lexical-binding: t -*-
 
 ;; Disable scroll bars.
 (scroll-bar-mode -1)
@@ -22,5 +22,5 @@
 (load-theme 'arc-dark t)
 
 
-(provide 'appearance)
-;;; appearance.el ends here
+(provide 'bahnhof-appearance)
+;;; bahnhof-appearance.el ends here
