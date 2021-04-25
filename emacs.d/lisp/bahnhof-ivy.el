@@ -20,7 +20,7 @@
   :demand
 
   :bind (("M-x" . counsel-M-x)
-         ("C-x b" . counsel-ibuffer)
+         ("C-x b" . counsel-switch-buffer)
          ("C-x C-f" . counsel-find-file))
 
   :config (setq ivy-initial-inputs-alist nil)) ;; Don't search starting with ^
