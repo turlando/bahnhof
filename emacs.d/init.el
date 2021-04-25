@@ -29,5 +29,6 @@
 
 (require 'bahnhof-packaging)
 (require 'bahnhof-appearance)
+(require 'bahnhof-ivy)
 
 ;;; init.el ends here
