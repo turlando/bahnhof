@@ -28,5 +28,6 @@
 (require 'bahnhof-evil)
 (require 'bahnhof-programming)
 (require 'bahnhof-company)
+(require 'bahnhof-haskell)
 
 ;;; init.el ends here
