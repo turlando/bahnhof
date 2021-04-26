@@ -2,6 +2,7 @@
 
 (use-package ivy
   :demand
+  :delight
 
   :bind (:map ivy-minibuffer-map
          ("C-l" . ivy-alt-done)

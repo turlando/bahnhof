@@ -39,6 +39,8 @@
 ;; Show column number in the mode line
 (column-number-mode)
 
+(use-package delight)
+
 
 (provide 'bahnhof-appearance)
 ;;; bahnhof-appearance.el ends here
