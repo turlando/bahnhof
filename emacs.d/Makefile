@@ -19,4 +19,4 @@ run:
 install: $(addprefix $(PREFIX)/, $(LISP_FILES))
 
 $(PREFIX)/%.el: %.el
-	install -o $(USER) -gusers -m644 $< $@
+	install -D -o $(USER) -gusers -m644 $< $@
