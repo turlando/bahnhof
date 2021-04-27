@@ -27,6 +27,7 @@
 (require 'bahnhof-appearance)
 (require 'bahnhof-evil)
 (require 'bahnhof-ivy)
+(require 'bahnhof-helpful)
 (require 'bahnhof-which-key)
 (require 'bahnhof-company)
 (require 'bahnhof-programming)
