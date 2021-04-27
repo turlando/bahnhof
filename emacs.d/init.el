@@ -26,8 +26,9 @@
 (require 'bahnhof-appearance)
 (require 'bahnhof-ivy)
 (require 'bahnhof-evil)
-(require 'bahnhof-programming)
 (require 'bahnhof-company)
+(require 'bahnhof-programming)
+(require 'bahnhof-nix)
 (require 'bahnhof-haskell)
 
 ;;; init.el ends here
