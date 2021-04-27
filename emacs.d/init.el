@@ -23,6 +23,7 @@
 ;;; Import submodules
 
 (require 'bahnhof-packaging)
+(require 'bahnhof-behaviour)
 (require 'bahnhof-appearance)
 (require 'bahnhof-ivy)
 (require 'bahnhof-evil)
