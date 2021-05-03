@@ -31,6 +31,7 @@
 (require 'bahnhof-which-key)
 (require 'bahnhof-company)
 (require 'bahnhof-programming)
+(require 'bahnhof-yaml)
 (require 'bahnhof-nix)
 (require 'bahnhof-haskell)
 
