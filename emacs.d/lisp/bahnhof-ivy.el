@@ -28,6 +28,9 @@
 
   :config (setq ivy-initial-inputs-alist nil)) ;; Don't search starting with ^
 
+;; amx will provide history in M-x
+(use-package amx)
+
 
 (provide 'bahnhof-ivy)
 ;;; bahnhof-ivy.el ends here
