@@ -9,6 +9,7 @@
          ("C-h" . ivy-backward-delete-char)
          ("C-j" . ivy-next-line)
          ("C-k" . ivy-previous-line)
+         ("ESC" . minibuffer-keyboard-quit)
 
          :map ivy-switch-buffer-map
          ("C-l" . ivy-alt-done)
@@ -20,11 +21,11 @@
 (use-package counsel
   :demand
 
-  :bind (("M-x" . counsel-M-x)
-         ("C-x b" . counsel-switch-buffer)
+  :bind (("M-x"     . counsel-M-x)
+         ("C-x b"   . counsel-switch-buffer)
          ("C-x C-f" . counsel-find-file)
-         ("C-h f" . counsel-describe-function)
-         ("C-h v" . counsel-describe-variable))
+         ("C-h f"   . counsel-describe-function)
+         ("C-h v"   . counsel-describe-variable))
 
   :config (setq ivy-initial-inputs-alist nil)) ;; Don't search starting with ^
 
