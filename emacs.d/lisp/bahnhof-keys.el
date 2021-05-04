@@ -25,10 +25,10 @@
 
 (general-def
   :prefix-map 'bahnhof-buffer-flip-map
-  "h" 'previous-buffer
-  "j" 'next-buffer
-  "k" 'previous-buffer
-  "l" 'next-buffer)
+  "h" '(previous-buffer :which-key "prev")
+  "j" '(next-buffer     :which-key "next")
+  "k" '(previous-buffer :which-key "prev")
+  "l" '(next-buffer     :which-key "next"))
 
 (hercules-def
   :toggle-funs 'bahnhof-toggle-buffer-flip-mode
@@ -36,12 +36,12 @@
   :transient t)
 
 (bahnhof-buffer-def
-  "b" 'counsel-switch-buffer
+  "b" '(counsel-switch-buffer           :which-key "switch")
   "f" '(bahnhof-toggle-buffer-flip-mode :which-key "flip")
-  "n" 'next-buffer
-  "p" 'previous-buffer
-  "k" 'kill-buffer
-  "d" 'kill-buffer-and-window)
+  "n" '(next-buffer                     :which-key "next")
+  "p" '(previous-buffer                 :which-key "prev")
+  "k" '(kill-buffer                     :which-key "kill")
+  "d" '(kill-buffer-and-window          :which-key "kill-close"))
 
 
 (provide 'bahnhof-keys)
