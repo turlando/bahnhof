@@ -21,7 +21,7 @@
 ;;; Leader prefix key
 
 (general-create-definer bahnhof-leader-def
-  :states '(emacs normal motion insert visual hybrid operator)
+  :states '(emacs normal motion visual hybrid operator)
   :prefix bahnhof-leader-key
   :keymaps 'override)
 
