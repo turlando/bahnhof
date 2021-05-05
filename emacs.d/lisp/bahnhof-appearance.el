@@ -31,7 +31,7 @@
 ;; Set font.
 (set-face-attribute 'default nil
                     :font "Source Code Pro"
-                    :height 100)
+                    :height 120)
 
 
 ;;; Mode line
