@@ -22,6 +22,7 @@
 
 ;;; Import submodules
 
+(require 'bahnhof-functions)
 (require 'bahnhof-packaging)
 (require 'bahnhof-behaviour)
 (require 'bahnhof-appearance)

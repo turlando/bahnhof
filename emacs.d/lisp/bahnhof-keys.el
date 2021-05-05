@@ -1,10 +1,11 @@
 ;;; bahnhof-keys.el                                   -*- lexical-binding: t -*-
 
-;;; Prefix and infix keys
+;;; Prefix keys
 
 (defconst bahnhof-leader-key "SPC")
 (defconst bahnhof-buffer-key "b")
 (defconst bahnhof-window-key "w")
+(defconst bahnhof-file-key   "f")
 
 
 ;;; Packages
@@ -17,7 +18,7 @@
   :requires (evil hercules))
 
 
-;;; Leader key
+;;; Leader prefix key
 
 (general-create-definer bahnhof-leader-def
   :states '(emacs normal motion insert visual hybrid operator)
@@ -28,7 +29,7 @@
  "SPC" '(counsel-M-x :which-key "M-x"))
 
 
-;;; Buffer key
+;;; Buffer prefix key
 
 (general-create-definer bahnhof-buffer-def
   :wrapping bahnhof-leader-def
@@ -59,7 +60,7 @@
   "l" '(next-buffer                     :which-key "next"))
 
 
-;;; Window key
+;;; Window prefix key
 
 (general-create-definer bahnhof-window-def
   :wrapping bahnhof-leader-def
@@ -103,6 +104,22 @@
   "b" '(split-window-horizontally         :which-key "split-h")
   "r" '(bahnhof-toggle-window-resize-mode :which-key "resize")
   "d" '(delete-window                     :which-key "close"))
+
+
+;;; File prefix key
+
+(general-create-definer bahnhof-file-def
+  :wrapping bahnhof-leader-def
+  :infix bahnhof-file-key
+  :wk-full-keys nil
+  "" '(:ignore t :which-key "file"))
+
+(bahnhof-file-def
+  "f" '(counsel-find-file                  :which-key "find")
+  "s" '(save-buffer                        :which-key "save")
+  "c" '(write-file                         :which-key "copy")
+  "r" '(bahnhof-rename-current-buffer-file :which-key "rename")
+  "d" '(bahnhof-delete-current-buffer-file :which-key "delete"))
 
 
 (provide 'bahnhof-keys)
