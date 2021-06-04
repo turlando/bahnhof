@@ -35,6 +35,7 @@
 (require 'bahnhof-programming)
 (require 'bahnhof-yaml)
 (require 'bahnhof-nix)
+(require 'bahnhof-clojure)
 (require 'bahnhof-haskell)
 
 ;;; init.el ends here
