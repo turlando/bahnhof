@@ -10,6 +10,8 @@
   (highlight-indent-guides-responsive 'top)
   (highlight-indent-guides-method     'bitmap))
 
+;; Highlight closing or opening parens
+(add-hook 'prog-mode-hook 'show-paren-mode)
 
 ;; Automatically balance parens
 (add-hook 'prog-mode-hook 'electric-pair-mode)
