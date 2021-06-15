@@ -3,13 +3,6 @@
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
-(use-package highlight-indent-guides
-  :delight
-
-  :custom
-  (highlight-indent-guides-responsive 'top)
-  (highlight-indent-guides-method     'bitmap))
-
 ;; Highlight closing or opening parens
 (add-hook 'prog-mode-hook 'show-paren-mode)
 
