@@ -373,6 +373,25 @@ def generate_fstab(base_mount_path):
 
 
 #
+# crypttab helpers
+#
+
+def crypttab_swap_entries(partitions: Partitions, cipher, key_size):
+    swap_partitions = [partition for partition in partitions
+                       if partition.type == PartitionType.SWAP]
+
+    return ["swap {} /dev/urandom swap,cipher={},size={},discard\n"
+            .format(partition.path, cipher, key_size)
+            for partition in swap_partitions]
+
+
+def write_crypttab_swap_entries(base_mount_path, partitions, cipher, key_size):
+    with open(base_mount_path + '/etc/crypttab', mode='a+') as f:
+        f.write(''.join(crypttab_swap_entries(partitions, cipher, key_size)))
+    return True
+
+
+#
 # EFISTUB
 #
 
@@ -381,7 +400,7 @@ def startup_nsh(root_device, root_label, root_device_mapper, swap_device):
     return (' '
             .join(["vmlinuz-linux", "rw",
                    "initrd=initramfs-linux.img",
-                   "cryptdevice={root_device}:{root_label}",
+                   "cryptdevice={root_device}:{root_label}:allow-discards",
                    "root={root_device_mapper}",
                    "resume={swap_device}"])
             .format(root_device=root_device,
@@ -549,9 +568,7 @@ PARTITIONS: Partitions = parse_partitions(
     DISK_PATH,
     UnparsedPartition(PartitionType.EFI, Filesystem.FAT32, '512M',
                       'efi', '/boot'),
-    UnparsedPartition(PartitionType.LUKS, Filesystem.SWAP, '4G', 'swap',
-                      luks_cipher=LUKS_CIPHER, luks_key_size=LUKS_KEY_SIZE,
-                      luks_passphrase=LUKS_PASSPHRASE),
+    UnparsedPartition(PartitionType.SWAP, Filesystem.SWAP, '1G', 'swap'),
     UnparsedPartition(PartitionType.LUKS, Filesystem.EXT4, None,
                       'system', '/',
                       luks_cipher=LUKS_CIPHER, luks_key_size=LUKS_KEY_SIZE,
@@ -581,16 +598,16 @@ OPERATIONS: Operations = (
               lambda: run(['pacstrap', BASE_MOUNT_PATH, 'base', 'linux'])),
     Operation("Generate fstab.",
               lambda: generate_fstab(BASE_MOUNT_PATH)),
+    Operation("Generate crypttab.",
+              lambda: write_crypttab_swap_entries(BASE_MOUNT_PATH, PARTITIONS,
+                                                  LUKS_CIPHER, LUKS_KEY_SIZE)),
     Operation("Set hostname.",
               lambda: set_hostname(BASE_MOUNT_PATH, HOSTNAME)),
-    Operation("Add cryptswap initramfs hook.",
-              lambda: create_cryptswap_hook(BASE_MOUNT_PATH, PARTITIONS)),
     Operation("Setup mkinitcpio.",
               lambda: generate_mkinitcpio_conf(
                   BASE_MOUNT_PATH,
                   hooks=['base', 'udev', 'autodetect', 'modconf',
-                         'block', 'encrypt', 'cryptswap', 'resume',
-                         'filesystems', 'keyboard', 'fsck'])),
+                         'block', 'encrypt', 'filesystems', 'keyboard','fsck'])),
     Operation("Generate initramfs.",
               lambda: run(['arch-chroot', BASE_MOUNT_PATH, 'mkinitcpio', '-P'])),
     Operation("Setup EFISTUB.",
