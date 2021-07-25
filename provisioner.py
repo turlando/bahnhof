@@ -589,8 +589,8 @@ OPERATIONS: Operations = (
               lambda: generate_mkinitcpio_conf(
                   BASE_MOUNT_PATH,
                   hooks=['base', 'udev', 'autodetect', 'modconf',
-                          'block', 'encrypt', 'cryptswap', 'resume',
-                          'filesystems', 'keyboard', 'fsck'])),
+                         'block', 'encrypt', 'cryptswap', 'resume',
+                         'filesystems', 'keyboard', 'fsck'])),
     Operation("Generate initramfs.",
               lambda: run(['arch-chroot', BASE_MOUNT_PATH, 'mkinitcpio', '-P'])),
     Operation("Setup EFISTUB.",
