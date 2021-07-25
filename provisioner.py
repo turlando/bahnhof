@@ -541,26 +541,6 @@ LUKS_PASSPHRASE = 'changeme'
 HOSTNAME = 'bahnhof'
 ROOT_PASSWORD = 'changeme'
 
-PACKAGES = ['tp_smapi', 'acpi_call',
-            'tlp', 'tlp-rdw',
-            'zsh', 'grml-zsh-config',
-            'sudo',
-            'neovim',
-            'make', 'gcc', 'binutils', 'pkg-config', 'fakeroot',
-            'networkmanager', 'dhcpcd',
-            'pulseaudio', 'pavucontrol',
-            'sway', 'dmenu',
-            'xcursor-neutral', 'arc-gtk-theme', 'arc-icon-theme',
-            'ttf-lato', 'adobe-source-code-pro-fonts',
-            'mate-terminal',
-            'caja', 'caja-open-terminal',
-            'sxiv', 'evince',
-            'firefox', 'thunderbird',
-            'keepassxc',
-            'hexchat', 'pidgin', 'telegram-desktop',
-            'celluloid', 'quodlibet']
-
-
 USERNAME = 'tancredi'
 PASSWORD = 'changeme'
 
@@ -617,8 +597,6 @@ OPERATIONS: Operations = (
               lambda: generate_startup_nsh(BASE_MOUNT_PATH, PARTITIONS)),
     Operation("Set root password.",
               lambda: passwd('root', ROOT_PASSWORD, chroot=BASE_MOUNT_PATH)),
-    Operation("Install extra packages.",
-              lambda: run(['pacstrap', BASE_MOUNT_PATH, *PACKAGES])),
     Operation("Setup user.",
               lambda: adduser(USERNAME, PASSWORD, chroot=BASE_MOUNT_PATH)),
     Operation("Umount filesystems.",
