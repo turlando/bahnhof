@@ -376,6 +376,7 @@ def generate_fstab(base_mount_path):
 # crypttab helpers
 #
 
+# TODO: parametrize discard
 def crypttab_swap_entries(partitions: Partitions, cipher, key_size):
     swap_partitions = [partition for partition in partitions
                        if partition.type == PartitionType.SWAP]
@@ -396,6 +397,7 @@ def write_crypttab_swap_entries(base_mount_path, partitions, cipher, key_size):
 #
 
 # TODO: This will not work with an unencrypted install.
+# TODO: Parametrize discard
 def startup_nsh(root_device, root_label, root_device_mapper, swap_device):
     return (' '
             .join(["vmlinuz-linux", "rw",
@@ -426,44 +428,6 @@ def generate_startup_nsh(base_mount_path, partitions):
 #
 # initramfs
 #
-
-
-def create_hook(base_mount_path, name, description, script):
-    hook_file = base_mount_path + '/etc/initcpio/hooks/' + name
-    install_file = base_mount_path + '/etc/initcpio/install/' + name
-
-    with open(hook_file, mode='w') as f:
-        f.write("run_hook() {\n")
-        for l in script:
-            f.write(l + "\n")
-        f.write("}")
-
-    with open(install_file, mode='w') as f:
-        f.write("build() {\n")
-        f.write("add_runscript\n")
-        f.write("}\n\n")
-        f.write("help(){\n")
-        f.write("cat<<HEREDOC\n")
-        f.write("\n".join(description) + "\n")
-        f.write("HEREDOC\n")
-        f.write("}")
-
-    return True
-
-
-def create_cryptswap_hook(base_mount_path, partitions: Partitions):
-    partitions_ = [p for p in partitions
-                   if p.type == PartitionType.LUKS
-                   and p.filesystem == Filesystem.SWAP]
-
-    create_hook(base_mount_path, 'cryptswap',
-                "Open encrypted swap partitions.",
-                ["cryptsetup open {path} {label}".format(path=partition.path,
-                                                         label=partition.label)
-                 for partition in partitions_])
-
-    return True
-
 
 def mkinitcpio_conf(modules: Optional[Sequence[Text]] = None,
                     binaries: Optional[Sequence[Text]] = None,
@@ -504,6 +468,7 @@ def passwd(username, password, chroot=None):
                    stdin=["{}:{}".format(username, password)])
 
 
+# FIXME: it seems it doesn't set the password correctly
 def adduser(username, password, chroot=None):
     return run([*(['arch-chroot', chroot] if chroot else []),
                 'useradd',
