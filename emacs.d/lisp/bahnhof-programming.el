@@ -2,6 +2,7 @@
 
 (use-package editorconfig
   :ensure t
+  :delight
   :config
   (editorconfig-mode 1))
 
