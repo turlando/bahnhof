@@ -10,7 +10,6 @@
 
       grub = {
         enable = true;
-        version = 2;
         device = "nodev";
         efiSupport = true;
         enableCryptodisk = true;
@@ -18,10 +17,6 @@
     };
 
     initrd = {
-      luks.devices."system" = {
-        device = "/dev/sda2";
-        allowDiscards = true;
-      };
       postDeviceCommands = lib.mkBefore ''
         mkdir -p /mnt
 
