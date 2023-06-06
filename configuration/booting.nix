@@ -17,6 +17,14 @@
     };
 
     initrd = {
+      luks.devices = [
+        {
+          name = "system";
+          device = "/dev/sda2";
+          allowDiscards = true;
+        };
+      ];
+
       postDeviceCommands = lib.mkBefore ''
         mkdir -p /mnt
 
