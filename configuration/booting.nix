@@ -19,7 +19,7 @@
     };
 
     initrd = {
-      postDeviceCommands = pkgs.lib.mkBefore ''
+      postDeviceCommands = lib.mkBefore ''
         mkdir -p /mnt
 
         # We first mount the btrfs root to /mnt
