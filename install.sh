@@ -45,8 +45,8 @@ mount -o subvol=state,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/state
 mkdir -p /mnt/var/log
 mount -o subvol=log,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/log
 
-mkdir /mnt/boot
-mount "$PART_EFI" /mnt/boot
+mkdir -p /mnt/boot/efi
+mount "$PART_EFI" /mnt/boot/efi
 
 nixos-generate-config --root /mnt --show-hardware-config > configuration/hardware.nix
 nixos-install --verbose --flake .#bahnhof
