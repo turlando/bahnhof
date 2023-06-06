@@ -40,7 +40,7 @@ mkdir /mnt/nix
 mount -o subvol=nix,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/nix
 
 mkdir -p /mnt/var/state
-mount -o subvol=state,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/state
+mount -o subvol=state,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/state
 
 mkdir -p /mnt/var/log
 mount -o subvol=log,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/log
