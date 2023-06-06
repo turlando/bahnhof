@@ -49,4 +49,4 @@ mkdir /mnt/boot
 mount "$PART_EFI" /mnt/boot
 
 nixos-generate-config --root /mnt --show-hardware-config > configuration/hardware.nix
-nixos-install --flake .#bahnhof
+nixos-install --verbose --flake .#bahnhof
