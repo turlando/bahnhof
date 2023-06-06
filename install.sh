@@ -45,8 +45,8 @@ mount -o subvol=state,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/state
 mkdir -p /mnt/var/log
 mount -o subvol=log,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/log
 
-mkdir -p /mnt/boot/efi
-mount "$PART_EFI" /mnt/boot/efi
+mkdir -p /mnt/boot
+mount "$PART_EFI" /mnt/boot
 
 nixos-generate-config      \
     --root /mnt            \
