@@ -22,7 +22,7 @@
           name = "system";
           device = "/dev/sda2";
           allowDiscards = true;
-        };
+        }
       ];
 
       postDeviceCommands = lib.mkBefore ''
