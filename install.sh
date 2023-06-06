@@ -15,7 +15,7 @@ parted --script "$DISK"                 \
     set 1 esp on
 
 cryptsetup --verify-passphrase -v \
-    luksFormat --type luks1 -c es-xts-plain64 -s 256 -h sha512 \
+    luksFormat --type luks1 -c aes-xts-plain64 -s 256 -h sha512 \
     "$PART_SYS"
 cryptsetup luksOpen "$PART_SYS" "$LUKS_SYS_NAME"
 
