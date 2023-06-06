@@ -8,7 +8,7 @@
       options = [ "subvol=root" "compress=zstd" "noatime" ];
     };
 
-    "/boot/efi" = {
+    "/boot" = {
       device = "/dev/sda1";
       fsType = "vfat";
     };

@@ -3,15 +3,16 @@
 {
   boot = {
     loader = {
-      efi = {
-        canTouchEfiVariables = true;
-        efiSysMountPoint = "/boot/efi";
-      };
+      # efi = {
+      #   canTouchEfiVariables = true;
+      #   efiSysMountPoint = "/boot/efi";
+      # };
 
       grub = {
         enable = true;
         device = "nodev";
         efiSupport = true;
+        efiInstallAsRemovable = true;
         enableCryptodisk = true;
       };
     };

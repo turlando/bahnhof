@@ -54,4 +54,4 @@ nixos-generate-config      \
     --show-hardware-config \
     > configuration/hardware.nix
 
-nixos-install --verbose --flake .#bahnhof
+nixos-install --verbose --no-root-password --flake .#bahnhof
