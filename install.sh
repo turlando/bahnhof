@@ -35,6 +35,9 @@ umount /mnt
 
 mount -o subvol=root,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt
 
+mkdir -p /mnt/boot/efi
+mount "$PART_EFI" /mnt/boot/efi
+
 mkdir /mnt/nix
 mount -o subvol=nix,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/nix
 
@@ -46,9 +49,6 @@ mount -o subvol=log,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/log
 
 mkdir /mnt/home
 mount -o subvol=home,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/home
-
-mkdir -p /mnt/boot/efi
-mount "$PART_EFI" /mnt/boot/efi
 
 nixos-generate-config      \
     --root /mnt            \
