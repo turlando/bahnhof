@@ -1,8 +1,10 @@
 set -eu
 
 DISK="/dev/sda"
+
 PART_EFI="${DISK}1"
 PART_SYS="${DISK}2"
+
 LUKS_SYS_NAME="system"
 LUKS_SYS_PATH="/dev/mapper/${LUKS_SYS_NAME}"
 
@@ -33,9 +35,6 @@ umount /mnt
 
 mount -o subvol=root,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt
 
-mkdir /mnt/home
-mount -o subvol=home,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/home
-
 mkdir /mnt/nix
 mount -o subvol=nix,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/nix
 
@@ -45,8 +44,11 @@ mount -o subvol=state,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/state
 mkdir -p /mnt/var/log
 mount -o subvol=log,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/log
 
-mkdir -p /mnt/boot
-mount "$PART_EFI" /mnt/boot
+mkdir /mnt/home
+mount -o subvol=home,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/home
+
+mkdir -p /mnt/boot/efi
+mount "$PART_EFI" /mnt/boot/efi
 
 nixos-generate-config      \
     --root /mnt            \

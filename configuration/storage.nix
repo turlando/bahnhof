@@ -29,6 +29,7 @@
       device = "/dev/sda2";
       fsType = "btrfs";
       options = [ "subvol=log" "compress=zstd" "noatime" ];
+      neededForBoot = true;
     };
 
     "/home" = {
