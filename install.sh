@@ -52,7 +52,6 @@ mount -o subvol=home,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/home
 
 nixos-generate-config      \
     --root /mnt            \
-    --no-filesystems       \
     --show-hardware-config \
     > configuration/hardware.nix
 
