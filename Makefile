@@ -8,7 +8,7 @@ NIXOS_REBUILD         := nixos-rebuild
 NIX_COLLECT_GARBAGE   := nix-collect-garbage
 NIX_REPL              := nix repl
 
-HARDWARE_CONFIG := config/hardware.nix
+HARDWARE_CONFIG := configuration/hardware.nix
 
 ###############################################################################
 

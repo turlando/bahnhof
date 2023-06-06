@@ -17,7 +17,7 @@ parted --script "$DISK"                 \
 cryptsetup --verify-passphrase -v \
     luksFormat --type luks1 -c aes-xts-plain64 -s 256 -h sha512 \
     "$PART_SYS"
-cryptsetup luksOpen "$PART_SYS" "$LUKS_SYS_NAME"
+cryptsetup --allow-discards luksOpen "$PART_SYS" "$LUKS_SYS_NAME"
 
 mkfs.vfat -F 32 -n "EFI" "$PART_EFI"
 mkfs.btrfs -L "System" "$LUKS_SYS_PATH"
@@ -47,3 +47,6 @@ mount -o subvol=log,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/log
 
 mkdir /mnt/boot
 mount "$PART_EFI" /mnt/boot
+
+nixos-generate-config --root /mnt --show-hardware-config > configuration/hardware.nix
+nixos-install --flake .#bahnhof
