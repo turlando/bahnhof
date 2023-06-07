@@ -12,6 +12,11 @@
     nixosConfigurations = {
       "bahnhof" = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
+
+        specialArgs = {
+          localPkgs = import ./packages inputs;
+        };
+
         modules = [
           ./configuration
 
