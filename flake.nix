@@ -10,7 +10,8 @@
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
-      localPkgs = import ./packages { pkgs = nixpkgs.pkgs; };
+      pkgs = nixpkgs.legacyPackages.x86_64-linux;
+      localPkgs = import ./packages { pkgs = nixpkgs; };
     in {
       nixosConfigurations = {
         "bahnhof" = nixpkgs.lib.nixosSystem {
