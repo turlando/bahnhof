@@ -4,11 +4,15 @@ let
   password = "$6$gUwMN4iOlxUpdxOG$xb6fW602zgvJQntGYyYit1kMYJ15uhEhIJbC2rr8TqU2QqpDyfT5mA0EBhAuhlzCxoB3FXzaiAC1xZLv.I5J6/";
 in
 {
-   security.sudo = {
-    enable = true;
-    extraConfig = ''
-      Defaults lecture="never"
-    '';
+  security = {
+    sudo = {
+      enable = true;
+      extraConfig = ''
+        Defaults lecture="never"
+      '';
+    };
+
+    polkit.enable = true;
   };
 
    users = {
