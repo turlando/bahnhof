@@ -2,7 +2,7 @@
 
 {
   imports = [
-    ./packages
+    ./packages.nix
     ./sway.nix
   ];
 
