@@ -7,12 +7,12 @@ in {
   wayland.windowManager.sway = {
     enable = true;
 
-    modifier = "Mod4";
-
-    # menu = default.launcher;
-    terminal = terminal;
-
     config = {
+      modifier = "Mod4";
+
+      # menu = default.launcher;
+      terminal = terminal;
+
       keybindings = {
         "${m}+Shift+e" = "exit";
         "${m}+Shift+r" = "reload";
