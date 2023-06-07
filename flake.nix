@@ -9,27 +9,30 @@
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs: {
-    nixosConfigurations = {
-      "bahnhof" = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
+    let
+      localPkgs = import ./packages inputs;
+    in
+      nixosConfigurations = {
+        "bahnhof" = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
 
-        specialArgs = {
-          localPkgs = import ./packages inputs;
+          specialArgs = {
+            localPkgs = localPkgs;
+          };
+
+          modules = [
+            ./configuration
+
+            home-manager.nixosModules.home-manager {
+              home-manager.useGlobalPkgs = true;
+              home-manager.useUserPackages = true;
+              home-manager.users.tancredi = import ./home;
+              home-manager.extraSpecialArgs = {
+                localPkgs = localPkgs;
+              };
+            }
+          ];
         };
-
-        modules = [
-          ./configuration
-
-          home-manager.nixosModules.home-manager {
-            home-manager.useGlobalPkgs = true;
-            home-manager.useUserPackages = true;
-            home-manager.users.tancredi = import ./home;
-            home-manager.extraSpecialArgs = {
-              localPkgs = import ./packages inputs;
-            };
-          }
-        ];
       };
-    };
   };
 }
