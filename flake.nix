@@ -24,6 +24,9 @@
             home-manager.useGlobalPkgs = true;
             home-manager.useUserPackages = true;
             home-manager.users.tancredi = import ./home;
+            home-manager.extraSpecialArgs = {
+              localPkgs = import ./packages inputs;
+            };
           }
         ];
       };
