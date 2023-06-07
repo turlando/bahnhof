@@ -1,6 +1,10 @@
 { ... }:
 
 {
+  imports = [
+    ./sway.nix
+  ];
+
   programs.home-manager.enable = true;
 
   home = {
