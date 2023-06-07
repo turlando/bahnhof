@@ -8,10 +8,10 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs: {
+  outputs = { self, nixpkgs, home-manager, ... }@inputs:
     let
       localPkgs = import ./packages inputs;
-    in
+    in {
       nixosConfigurations = {
         "bahnhof" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
