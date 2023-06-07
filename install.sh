@@ -26,6 +26,7 @@ mkfs.btrfs -L "System" "$LUKS_SYS_PATH"
 
 mount -t btrfs "$LUKS_SYS_PATH" /mnt
 btrfs subvolume create /mnt/root
+btrfs subvolume create /mnt/boot
 btrfs subvolume create /mnt/nix
 btrfs subvolume create /mnt/state
 btrfs subvolume create /mnt/log
@@ -35,7 +36,10 @@ umount /mnt
 
 mount -o subvol=root,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt
 
-mkdir -p /mnt/boot/efi
+mkdir /mnt/boot
+mount -o subvol=boot,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/boot
+
+mkdir /mnt/boot/efi
 mount "$PART_EFI" /mnt/boot/efi
 
 mkdir /mnt/nix
