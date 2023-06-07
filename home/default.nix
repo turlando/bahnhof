@@ -8,4 +8,10 @@
     homeDirectory = "/home/tancredi";
     stateVersion = "23.05";
   };
+
+  manual = {
+    html.enable = false;
+    json.enable = false;
+    manpages.enable = false;
+  };
 }
