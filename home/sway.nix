@@ -2,7 +2,7 @@
 
 let
   m = config.wayland.windowManager.sway.config.modifier;
-  terminal = "${pkgs.mate.mate-terminal/bin/mate-terminal}";
+  terminal = "${pkgs.mate.mate-terminal}/bin/mate-terminal";
 in {
   wayland.windowManager.sway = {
     enable = true;
