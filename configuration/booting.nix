@@ -6,7 +6,7 @@
 
     loader = {
       efi = {
-        efiSysMountPoint = "/boot/efi";
+        efiSysMountPoint = "/efi";
       };
 
       grub = {
