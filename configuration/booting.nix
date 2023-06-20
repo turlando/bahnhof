@@ -12,6 +12,7 @@
       grub = {
         enable = true;
         device = "nodev";
+        copyKernsl = false;
         efiSupport = true;
         efiInstallAsRemovable = true;
         enableCryptodisk = true;
