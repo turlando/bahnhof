@@ -57,11 +57,9 @@ mount -o subvol=log,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/log
 mkdir -p /mnt/home/tancredi
 mount -o subvol=home,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/home/tancredi
 
-dd if=/dev/urandom of=/tmp/keyfile.bin bs=1024 count=4
-cryptsetup luksAddKey "$PART_SYS" /tmp/keyfile.bin
-echo /tmp/keyfile.bin                         \
-    | cpio -o -H newc -R +0:+0 --reproducible \
-    | gzip -9 > /mnt/boot/initrd.keys.gz
+dd if=/dev/urandom of=/mnt/boot/system.key bs=1024 count=4
+cryptsetup luksAddKey "$PART_SYS" /mnt/boot/system.key
+
 
 nixos-generate-config      \
     --root /mnt            \

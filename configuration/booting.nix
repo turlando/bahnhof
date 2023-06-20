@@ -19,6 +19,16 @@
     };
 
     initrd = {
+      secrets = {
+        "/boot/system.key" = "/boot/system.key";
+      };
+
+      luks.devices = {
+        system = {
+          keyFile = "/boot/system.key";
+        };
+      };
+
       postDeviceCommands = lib.mkBefore ''
         mkdir -p /mnt
 
