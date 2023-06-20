@@ -7,14 +7,11 @@
     loader = {
       efi = {
         efiSysMountPoint = "/boot/efi";
+        canTouchEfiVariables = false;
       };
 
-      grub = {
+      systemd-boot = {
         enable = true;
-        device = "nodev";
-        efiSupport = true;
-        efiInstallAsRemovable = true;
-        enableCryptodisk = true;
       };
     };
 
