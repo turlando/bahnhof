@@ -137,6 +137,11 @@ swapon "/dev/zvol/${POOL_SYS}/swap"
 
 ################################################################################
 
+dd if=/dev/urandom of=/mnt/boot/system.key bs=1024 count=4
+cryptsetup luksAddKey "$PART_SYS" /mnt/boot/system.key
+
+################################################################################
+
 nixos-generate-config      \
     --root /mnt            \
     --show-hardware-config \
