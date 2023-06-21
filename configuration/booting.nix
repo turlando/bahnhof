@@ -28,6 +28,7 @@
         system = {
           device = "/dev/sda2";
           keyFile = "/boot/system.key";
+          allowDiscards = true;
         };
       };
 
