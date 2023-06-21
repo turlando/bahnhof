@@ -85,7 +85,7 @@ zfs create               \
 zfs create               \
     -o acltype=posixacl  \
     -o mountpoint=legacy \
-    -o compression=zstd  \
+    -o compression=lz4   \
     "${POOL_SYS}/log"
 
 zfs create               \
