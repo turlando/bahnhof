@@ -56,7 +56,6 @@ zpool create                                        \
       -o ashift=12                                  \
       -o compatibility=grub2                        \
       -o altroot=/mnt                               \
-#      -O quota="$QUOTA_SYS"                         \
       -O canmount=off                               \
       -O checksum=fletcher4                         \
       -O compression=lz4                            \
