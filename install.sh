@@ -1,65 +1,129 @@
 set -eu
 
+################################################################################
+
 DISK="/dev/sda"
 
 PART_EFI="${DISK}1"
 PART_SYS="${DISK}2"
 
+LABEL_EFI="EFI"
+LABEL_SYS="System"
+
 LUKS_SYS_NAME="system"
 LUKS_SYS_PATH="/dev/mapper/${LUKS_SYS_NAME}"
 
-MOUNT_EFI="/mnt/efi"
+MOUNT_ROOT="/mnt"
+MOUNT_EFI="${MOUNT_ROOT}/efi"
+
+POOL_SYS="system"
+
+# Approximately 80% of 472GiB which is the available space
+QUOTA_SYS="380G"
+
+################################################################################
 
 sgdisk --zap-all "$DISK"
 
-parted --script "$DISK"                 \
-    mklabel gpt                         \
-    mkpart "EFI"    fat32 1MiB   512MiB \
-    mkpart "System"       512MiB 100%   \
+parted --script "$DISK"                     \
+    mklabel gpt                             \
+    mkpart "$LABEL_EFI" fat32 1MiB   512MiB \
+    mkpart "$LABEL_SYS"       512MiB 100%   \
     set 1 esp on
 
+################################################################################
+
+mkfs.vfat -F 32 -n "$LABEL_EFI" "$PART_EFI"
+
+################################################################################
+
+# GRUB only supports LUKS 1. That's what we have to deal with.
+
+# This will ask for the encryption password twice.
 cryptsetup --verify-passphrase -v \
     luksFormat --type luks1 -c aes-xts-plain64 -s 256 -h sha512 \
     "$PART_SYS"
+
+# This will ask for the encryption password again.
 cryptsetup --allow-discards luksOpen "$PART_SYS" "$LUKS_SYS_NAME"
 
-mkfs.vfat -F 32 -n "EFI" "$PART_EFI"
-mkfs.btrfs -L "System" "$LUKS_SYS_PATH"
+################################################################################
 
-mount -t btrfs "$LUKS_SYS_PATH" /mnt
-btrfs subvolume create /mnt/root
-btrfs subvolume create /mnt/boot
-btrfs subvolume create /mnt/nix
-btrfs subvolume create /mnt/state
-btrfs subvolume create /mnt/log
-btrfs subvolume create /mnt/home
-btrfs subvolume create /mnt/home/tancredi
-btrfs subvolume snapshot -r /mnt/root /mnt/root-empty
-umount /mnt
+zpool create                                        \
+      -m none                                       \
+      -o ashift=12                                  \
+      -o altroot=/mnt                               \
+#      -O quota="$QUOTA_SYS"                         \
+      -O canmount=off                               \
+      -O checksum=fletcher4                         \
+      -O compression=lz4                            \
+      -O xattr=sa                                   \
+      -O normalization=formD                        \
+      -O atime=off                                  \
+      "$POOL_SYS"                                   \
+      "$LUKS_SYS_PATH"
 
-mount -o subvol=root,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt
+zfs create               \
+    -o mountpoint=legacy \
+    -o acltype=posixacl  \
+    -o compression=zstd  \
+    "${POOL_SYS}/root"
 
-mkdir /mnt/boot
-mount -o subvol=boot,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/boot
+zfs snapshot                 \
+    "${POOL_SYS}/root@empty"
 
-mkdir -p "$MOUNT_EFI"
+zfs create               \
+    -o mountpoint=legacy \
+    -o acltype=posixacl  \
+    -o compression=lz4   \
+    "${POOL_SYS}/boot"
+
+zfs create               \
+    -o mountpoint=legacy \
+    -o compression=zstd  \
+    "${POOL_SYS}/nix"
+
+zfs create               \
+    -o acltype=posixacl  \
+    -o mountpoint=legacy \
+    -o compression=zstd  \
+    "${POOL_SYS}/log"
+
+zfs create               \
+    -o acltype=posixacl  \
+    -o mountpoint=legacy \
+    -o compression=zstd  \
+    "${POOL_SYS}/state"
+
+zfs create                      \
+    -o acltype=posixacl         \
+    -o mountpoint=legacy        \
+    -o compression=zstd         \
+    "${POOL_SYS}/tancredi"
+
+################################################################################
+
+mkdir -p "$MOUNT_ROOT"
+mount -t zfs "${POOL_SYS}/root" "$MOUNT_ROOT"
+
 mount "$PART_EFI" "$MOUNT_EFI"
 
-mkdir -p /mnt/nix
-mount -o subvol=nix,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/nix
+mkdir -p "${MOUNT_ROOT}/boot"
+mount -t zfs "${POOL_SYS}/boot" "${MOUNT_ROOT}/boot"
 
-mkdir -p /mnt/var/state
-mount -o subvol=state,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/state
+mkdir -p "${MOUNT_ROOT}/nix"
+mount -t zfs "${POOL_SYS}/nix" "${MOUNT_ROOT}/nix"
 
-mkdir -p /mnt/var/log
-mount -o subvol=log,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/var/log
+mkdir -p "${MOUNT_ROOT}/var/log"
+mount -t zfs "${POOL_SYS}/log" "${MOUNT_ROOT}/var/log"
 
-mkdir -p /mnt/home/tancredi
-mount -o subvol=home,compress=zstd,noatime "$LUKS_SYS_PATH" /mnt/home/tancredi
+mkdir -p "${MOUNT_ROOT}/var/state"
+mount -t zfs "${POOL_SYS}/state" "${MOUNT_ROOT}/var/state"
 
-dd if=/dev/urandom of=/mnt/boot/system.key bs=1024 count=4
-cryptsetup luksAddKey "$PART_SYS" /mnt/boot/system.key
+mkdir -p "${MOUNT_ROOT}/home/tancredi"
+mount -t zfs "${POOL_SYS}/tancredi" "${MOUNT_ROOT}/home/tancredi"
 
+################################################################################
 
 nixos-generate-config      \
     --root /mnt            \
