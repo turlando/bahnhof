@@ -54,7 +54,7 @@ cryptsetup --allow-discards luksOpen "$PART_SYS" "$LUKS_SYS_NAME"
 zpool create                                        \
       -m none                                       \
       -o ashift=12                                  \
-      -o compatiblity=grub2                         \
+      -o compatibility=grub2                        \
       -o altroot=/mnt                               \
 #      -O quota="$QUOTA_SYS"                         \
       -O canmount=off                               \
