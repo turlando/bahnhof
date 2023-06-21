@@ -101,7 +101,7 @@ zfs create                      \
 zfs create                         \
     -b $(getconf PAGESIZE)         \
     -V "$SWAP_SIZE"                \
-    -o compression=zstd            \
+    -o compression=lz4             \
     -o logbias=throughput          \
     -o sync=always                 \
     -o primarycache=metadata       \
