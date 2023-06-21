@@ -1,4 +1,4 @@
-{ ... }:
+{ lib, ... }:
 
 {
   boot = {
@@ -30,7 +30,7 @@
         };
       };
 
-      postDeviceCommands = mkAfter ''
+      postDeviceCommands = lib.mkAfter ''
         zfs rollback -r system/root@empty
       '';
     };
