@@ -21,6 +21,8 @@ POOL_SYS="system"
 # Approximately 80% of 472GiB which is the available space
 QUOTA_SYS="380G"
 
+SWAP_SIZE="1G"
+
 ################################################################################
 
 sgdisk --zap-all "$DISK"
@@ -52,6 +54,7 @@ cryptsetup --allow-discards luksOpen "$PART_SYS" "$LUKS_SYS_NAME"
 zpool create                                        \
       -m none                                       \
       -o ashift=12                                  \
+      -o compatiblity=grub2                         \
       -o altroot=/mnt                               \
 #      -O quota="$QUOTA_SYS"                         \
       -O canmount=off                               \
@@ -101,6 +104,17 @@ zfs create                      \
     -o compression=zstd         \
     "${POOL_SYS}/tancredi"
 
+zfs create                         \
+    -b $(getconf PAGESIZE)         \
+    -V "$SWAP_SIZE"                \
+    -o compression=zstd            \
+    -o logbias=throughput          \
+    -o sync=always                 \
+    -o primarycache=metadata       \
+    -o secondarycache=none         \
+    -o com.sun:auto-snapshot=false \
+    "${POOL_SYS}/swap"
+
 ################################################################################
 
 mkdir -p "$MOUNT_ROOT"
@@ -122,6 +136,9 @@ mount -t zfs "${POOL_SYS}/state" "${MOUNT_ROOT}/var/state"
 
 mkdir -p "${MOUNT_ROOT}/home/tancredi"
 mount -t zfs "${POOL_SYS}/tancredi" "${MOUNT_ROOT}/home/tancredi"
+
+mkswap -f "/dev/zvol/${POOL_SYS}/swap"
+swapon "/dev/zvol/${POOL_SYS}/swap"
 
 ################################################################################
 
