@@ -68,7 +68,6 @@ zpool create                                        \
 zfs create               \
     -o mountpoint=legacy \
     -o acltype=posixacl  \
-    -o compression=zstd  \
     "${POOL_SYS}/root"
 
 zfs snapshot                 \
@@ -77,12 +76,10 @@ zfs snapshot                 \
 zfs create               \
     -o mountpoint=legacy \
     -o acltype=posixacl  \
-    -o compression=lz4   \
     "${POOL_SYS}/boot"
 
 zfs create               \
     -o mountpoint=legacy \
-    -o compression=zstd  \
     "${POOL_SYS}/nix"
 
 zfs create               \
@@ -94,13 +91,11 @@ zfs create               \
 zfs create               \
     -o acltype=posixacl  \
     -o mountpoint=legacy \
-    -o compression=zstd  \
     "${POOL_SYS}/state"
 
 zfs create                      \
     -o acltype=posixacl         \
     -o mountpoint=legacy        \
-    -o compression=zstd         \
     "${POOL_SYS}/tancredi"
 
 zfs create                         \
