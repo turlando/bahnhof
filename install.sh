@@ -114,6 +114,7 @@ zfs create                         \
 mkdir -p "$MOUNT_ROOT"
 mount -t zfs "${POOL_SYS}/root" "$MOUNT_ROOT"
 
+mkdir -p "$MOUNT_EFI"
 mount "$PART_EFI" "$MOUNT_EFI"
 
 mkdir -p "${MOUNT_ROOT}/boot"
