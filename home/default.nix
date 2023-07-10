@@ -4,6 +4,7 @@
   imports = [
     ./packages.nix
     ./sway.nix
+    ./waybar.nix
   ];
 
   programs.home-manager.enable = true;
