@@ -1,7 +1,7 @@
 { config, pkgs, lib, ... }:
 
 let
-  cfg = config.wayland.windowManager.sway.config
+  cfg = config.wayland.windowManager.sway.config;
   m = cfg.modifier;
   terminal = "${pkgs.mate.mate-terminal}/bin/mate-terminal";
 in {
