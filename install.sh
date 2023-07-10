@@ -21,7 +21,7 @@ POOL_SYS="system"
 # Approximately 80% of 472GiB which is the available space
 QUOTA_SYS="380G"
 
-SWAP_SIZE="1G"
+SWAP_SIZE="128M"
 
 ################################################################################
 
