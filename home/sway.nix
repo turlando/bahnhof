@@ -45,7 +45,7 @@ in {
       };
 
       startup = [
-        { command = "${pkgs.wayvnc}/bin/wayvnc"; }
+        { command = "${pkgs.wayvnc}/bin/wayvnc -p 0.0.0.0"; }
       ];
     };
 
