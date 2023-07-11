@@ -11,7 +11,7 @@ let
 
   script = pkgs.writeShellScriptBin "menu-run" ''
   ${pkgs.bemenu}/bin/bemenu-run -b -i \
-      -h ${height} \
+      -H ${height} \
       --fn ${font} \
       -p "${prompt}" \
       --nb ${normalBg} \
