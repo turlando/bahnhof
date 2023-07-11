@@ -28,13 +28,12 @@ pkgs.stdenv.mkDerivation {
   buildInputs = [
     pkgs.bemenu
     pkgs.lato
-    script
   ];
 
   dontUnpack = true;
 
   installPhase = ''
     mkdir -p $out/bin
-    cp -p ${script}/menu-run $out/bin/menu-run
+    cp -p ${script} $out/bin/menu-run
   '';
 }
