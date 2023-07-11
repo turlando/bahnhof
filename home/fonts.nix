@@ -5,5 +5,6 @@
 
   home.packages = [
     pkgs.lato
+    pkgs.source-code-pro
   ];
 }

@@ -6,7 +6,7 @@
     server.enable = true;
     settings = {
       main = {
-        font = "Lato:size=11";
+        font = "Source Code Pro:size=11";
       };
     };
   };
