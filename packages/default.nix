@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  menu = ./menu;
+  menu = import ./menu;
 in
 {
   lsws = pkgs.callPackage ./lsws {};
