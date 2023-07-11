@@ -3,8 +3,8 @@
 {
   imports = [
     ./packages.nix
-    ./sway.nix
-    ./waybar.nix
+    ./fonts.nix
+    ./desktop
   ];
 
   programs.home-manager.enable = true;
