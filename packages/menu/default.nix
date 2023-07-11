@@ -13,7 +13,7 @@ let
   ${pkgs.bemenu}/bin/bemenu-run -b -i \
       -h ${height} \
       --fn ${font} \
-      -p ${prompt} \
+      -p "${prompt}" \
       --nb ${normalBg} \
       --sb ${selectBg} \
       --nf ${normalText} \
