@@ -49,7 +49,7 @@ in
 
     installPhase = ''
       mkdir -p $out/bin
-      echo -n ${menuScript} > $out/bin/menu
+      echo -n '${menuScript}' > $out/bin/menu
       chmod +x $out/bin/menu
     '';
   };
@@ -67,7 +67,7 @@ in
 
     installPhase = ''
       mkdir -p $out/bin
-      echo -n ${menurunScript} > $out/bin/menu-run
+      echo -n '${menurunScript}' > $out/bin/menu-run
       chmod +x $out/bin/menu-run
     '';
     };
