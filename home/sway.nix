@@ -44,6 +44,8 @@ in {
         "${m}+Shift+minus" = "focus mode_toggle";
       };
 
+      bars = {};
+
       startup = [
         { command = "${pkgs.wayvnc}/bin/wayvnc -p 0.0.0.0"; }
         { command = terminal; }
