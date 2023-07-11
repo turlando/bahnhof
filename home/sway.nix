@@ -22,7 +22,7 @@ in {
         };
 
         "1739:0:Synaptics_TM3075-002" = {
-          accel_profile    = "adaptative";
+          accel_profile    = "adaptive";
           click_method     = "clickfinger";
           dwt              = "enabled";
           middle_emulation = "enabled";
@@ -46,6 +46,7 @@ in {
 
       startup = [
         { command = "${pkgs.wayvnc}/bin/wayvnc -p 0.0.0.0"; }
+        { command = "${pkgs.mate-terminal}/bin/mate-terminal"; }
       ];
     };
 
