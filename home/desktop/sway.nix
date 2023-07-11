@@ -1,9 +1,13 @@
-{ config, pkgs, lib, ... }:
+{ config, pkgs, localPkgs, lib, ... }:
 
 let
   cfg = config.wayland.windowManager.sway.config;
   m = cfg.modifier;
+
   terminal = "${pkgs.foot}/bin/foot";
+  menu = "${localPkgs.menu}/bin/menu";
+  menu-run = "${localPkgs.menu-run}/bin/menu-run";
+  lsws = "${localPkgs.lsws}/bin/lsws";
 in {
   wayland.windowManager.sway = {
     enable = true;
@@ -39,6 +43,9 @@ in {
         "${m}+Shift+r" = "reload";
 
         "${m}+q" = "kill";
+
+        "${m}+Space" = "exec ${menu-run}";
+        "${m}+Tab" = "exec swaymsg workspace $(${lsws} | ${menu})"
 
         "${m}+minus" = "floating toggle";
         "${m}+Shift+minus" = "focus mode_toggle";
