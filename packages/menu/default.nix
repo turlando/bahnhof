@@ -11,13 +11,13 @@ let
 
   script = pkgs.writeShellScriptBin "menu-run" ''
   ${pkgs.bemenu}/bin/bemenu-run -b -i \
-      -H ${height} \
-      --fn ${font} \
-      -p "${prompt}" \
-      --nb ${normalBg} \
-      --sb ${selectBg} \
-      --nf ${normalText} \
-      --sf ${selectText} \
+      -H '${height}' \
+      --fn '${font}' \
+      -p '${prompt}' \
+      --nb '${normalBg}' \
+      --sb '${selectBg}' \
+      --nf '${normalText}' \
+      --sf '${selectText}' \
   <&0
   '';
 in
