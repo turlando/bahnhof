@@ -30,4 +30,6 @@ pkgs.stdenv.mkDerivation {
     pkgs.lato
     script
   ];
+
+  dontUnpack = true;
 }
