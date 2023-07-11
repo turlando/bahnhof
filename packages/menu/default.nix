@@ -32,4 +32,9 @@ pkgs.stdenv.mkDerivation {
   ];
 
   dontUnpack = true;
+
+  installPhase = ''
+    mkdir -p $out/bin
+    cp -p ${script} $out/bin/menu-run
+  '';
 }
