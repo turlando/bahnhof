@@ -46,7 +46,7 @@ in {
 
       startup = [
         { command = "${pkgs.wayvnc}/bin/wayvnc -p 0.0.0.0"; }
-        { command = "${pkgs.mate-terminal}/bin/mate-terminal"; }
+        { command = terminal; }
       ];
     };
 
