@@ -3,7 +3,7 @@
 let
   cfg = config.wayland.windowManager.sway.config;
   m = cfg.modifier;
-  terminal = "${pkgs.mate.mate-terminal}/bin/mate-terminal";
+  terminal = "${pkgs.foot}/bin/foot";
 in {
   wayland.windowManager.sway = {
     enable = true;
