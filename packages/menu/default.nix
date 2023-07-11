@@ -34,6 +34,6 @@ pkgs.stdenv.mkDerivation {
 
   installPhase = ''
     mkdir -p $out/bin
-    cp -p ${script} $out/bin/menu-run
+    cp -p ${script}/bin/menu-run $out/bin/menu-run
   '';
 }
