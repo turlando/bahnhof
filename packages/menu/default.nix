@@ -12,12 +12,12 @@ let
   script = pkgs.writeShellScriptBin "menu-run" ''
   ${pkgs.bemenu}/bin/bemenu-run -b -i \
       -h ${height} \
-      -fn ${font} \
+      --fn ${font} \
       -p ${prompt} \
-      -nb ${normalBg} \
-      -sb ${selectBg} \
-      -nf ${normalText} \
-      -sf ${selectText} \
+      --nb ${normalBg} \
+      --sb ${selectBg} \
+      --nf ${normalText} \
+      --sf ${selectText} \
   <&0
   '';
 in
