@@ -70,5 +70,5 @@ in
       echo -n ${menurunScript} > $out/bin/menu-run
       chmod +x $out/bin/menu-run
     '';
-  }
+    };
 }
