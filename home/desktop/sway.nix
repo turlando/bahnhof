@@ -5,7 +5,6 @@ let
   m = cfg.modifier;
 
   terminal = "${pkgs.foot}/bin/foot";
-  menu = "${localPkgs.menu}/bin/menu";
   menu-run = "${localPkgs.menu-run}/bin/menu-run";
   lsws = "${localPkgs.lsws}/bin/lsws";
 in {
