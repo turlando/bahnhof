@@ -12,7 +12,7 @@
     settings = {
       main = {
         layer = "bottom";
-        output = [ "eDP-1" ];
+        # output = [ "eDP-1" ];
         position = "bottom";
 
         modules-left = [
