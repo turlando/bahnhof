@@ -1,7 +1,7 @@
 { pkgs, ... }:
 
 let
-  height = "20"";
+  height = "20";
   font = "Lato:style=Bold:size=8";
   prompt = "Run:";
   normalBg = "#383C4A";
