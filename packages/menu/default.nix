@@ -9,7 +9,7 @@ let
   normalText = "#D3DAE3";
   selectText = "#FFFFFF";
 
-  menurunScript = ''
+  menuScript = ''
   #!/bin/sh
   ${pkgs.bemenu}/bin/bemenu -b -i \
       -h ${height} \
