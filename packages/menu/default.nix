@@ -18,7 +18,7 @@ let
       -nb ${normalBg} \
       -sb ${selectBg} \
       -nf ${normalText} \
-      -sf ${selectText}
+      -sf ${selectText} \
   <&0
   '';
 
@@ -31,7 +31,7 @@ let
       -nb ${normalBg} \
       -sb ${selectBg} \
       -nf ${normalText} \
-      -sf ${selectText}
+      -sf ${selectText} \
   <&0
   '';
 in
