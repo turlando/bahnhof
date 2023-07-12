@@ -7,18 +7,13 @@ stdenv.mkDerivation {
   pname = "menu";
   version = "0.0.1";
 
-  src = ./menu;
-
   nativeBuildInputs = [ makeWrapper ];
   buildInputs = buildInputs;
 
-  unpackCmd = ''
-    mkdir src
-    cp -p $curSrc src
-  '';
+  dontUnpack = true;
 
   installPhase = ''
-    install -m755 menu $out/bin/menu
+    install -m755 ${./menu} $out/bin/menu
     wrapProgram $out/bin/menu --prefix PATH : '${lib.makeBinPath buildInputs}'
   '';
 }
