@@ -5,7 +5,8 @@ let
   m = cfg.modifier;
 
   terminal = "${pkgs.foot}/bin/foot";
-  menu-run = "${localPkgs.menu-run}/bin/menu-run";
+  menu = "${localPkgs.menu}/bin/menu";
+  menu-run = "${localPkgs.menu}/bin/menu -r";
   lsws = "${localPkgs.lsws}/bin/lsws";
 in {
   wayland.windowManager.sway = {
@@ -44,7 +45,7 @@ in {
         "${m}+q" = "kill";
 
         "${m}+Space" = "exec ${menu-run}";
-        # "${m}+Tab" = "exec swaymsg workspace $(${lsws} | ${menu})";
+        "${m}+Tab" = "exec swaymsg workspace $(${lsws} | ${menu})";
 
         "${m}+minus" = "floating toggle";
         "${m}+Shift+minus" = "focus mode_toggle";

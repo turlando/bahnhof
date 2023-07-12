@@ -2,5 +2,5 @@
 
 {
   lsws = pkgs.callPackage ./lsws {};
-  menu-run = pkgs.callPackage ./menu {};
+  menu = pkgs.callPackage ./menu {};
 }

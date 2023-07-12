@@ -1,0 +1,40 @@
+#!/bin/sh
+## NAME
+##        menu - wrapper around dmenu
+##
+## SYNOPSIS
+##        menu [-r]
+##
+## DESCRIPTION
+##        This script requires dmenu with the line-height patch.
+##
+##        The stdin is redirected to dmenu.
+##
+##        -r
+##               Run dmenu_run instead of dmenu
+##
+
+HEIGHT=20
+FONT='Lato:style=Bold:size=8'
+PROMPT=''
+NORMAL_BACKGROUND='#383C4A'
+SELECT_BACKGROUND='#5294E2'
+NORMAL_TEXT='#D3DAE3'
+SELECT_TEXT='#FFFFFF'
+
+CMD=$(if [ "${1:-}" = "-r" ]
+      then echo "bemenu-run"
+      else echo "bemenu"
+      fi)
+
+${CMD} -b -i                       \
+       -H  "${HEIGHT}"             \
+       --fn "${FONT}"              \
+       -p  "${PROMPT}"             \
+       --nb "${NORMAL_BACKGROUND}" \
+       --sb "${SELECT_BACKGROUND}" \
+       --nf "${NORMAL_TEXT}"       \
+       --sf "${SELECT_TEXT}"       \
+       <&0
+
+exit 0
