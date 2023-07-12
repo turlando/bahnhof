@@ -13,7 +13,7 @@ stdenv.mkDerivation {
   dontUnpack = true;
 
   installPhase = ''
-    install -m755 ${./menu} $out/bin/menu
+    install -Dm755 ${./menu} $out/bin/menu
     wrapProgram $out/bin/menu --prefix PATH : '${lib.makeBinPath buildInputs}'
   '';
 }
