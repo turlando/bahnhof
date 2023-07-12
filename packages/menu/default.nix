@@ -13,7 +13,7 @@ stdenv.mkDerivation {
   buildInputs = buildInputs;
 
   unpackCmd = ''
-    mv $curSrc menu
+    cp -p $curSrc menu
   '';
 
   installPhase = ''
