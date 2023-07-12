@@ -1,19 +1,21 @@
-{ pkgs, ... }:
+{ lib, stdenv, pkgs, ... }:
 
-pkgs.stdenv.mkDerivation {
+let
+  buildInputs = [ pkgs.bemenu pkgs.lato ];
+in
+stdenv.mkDerivation {
   pname = "menu";
   version = "0.0.1";
 
-  buildInputs = [
-    pkgs.bemenu
-    pkgs.lato
-  ];
+  src = ./menu;
+
+  nativeBuildInputs = [ makeWrapper ];
+  buildInputs = buildInputs;
 
   dontUnpack = true;
 
   installPhase = ''
-    mkdir -p $out/bin
-    cp ${./menu} $out/bin/menu
-    chmod +x $out/bin/menu
+    install -m755 menu $out/bin/menu
+    wrapProgram $out/bin/menu --prefix PATH : '${makeBinPath buildInputs}'
   '';
 }
