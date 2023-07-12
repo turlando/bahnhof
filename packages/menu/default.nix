@@ -1,4 +1,4 @@
-{ lib, stdenv, pkgs, ... }:
+{ lib, pkgs, stdenv, makeWrapper, ... }:
 
 let
   buildInputs = [ pkgs.bemenu pkgs.lato ];
