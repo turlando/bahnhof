@@ -16,6 +16,6 @@ stdenv.mkDerivation {
 
   installPhase = ''
     install -m755 menu $out/bin/menu
-    wrapProgram $out/bin/menu --prefix PATH : '${makeBinPath buildInputs}'
+    wrapProgram $out/bin/menu --prefix PATH : '${lib.makeBinPath buildInputs}'
   '';
 }
