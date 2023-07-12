@@ -13,11 +13,12 @@ stdenv.mkDerivation {
   buildInputs = buildInputs;
 
   unpackCmd = ''
-    cp -p $curSrc menu
+    mkdir src
+    cp -p $curSrc src
   '';
 
   installPhase = ''
-    install -m755 menu $out/bin/menu
+    install -m755 src/menu $out/bin/menu
     wrapProgram $out/bin/menu --prefix PATH : '${lib.makeBinPath buildInputs}'
   '';
 }
