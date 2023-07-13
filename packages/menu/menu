@@ -1,40 +1,57 @@
 #!/bin/sh
+set -eu
+
 ## NAME
-##        menu - wrapper around dmenu
+##        menu - wrapper around bemenu
 ##
 ## SYNOPSIS
 ##        menu [-r]
 ##
 ## DESCRIPTION
-##        This script requires dmenu with the line-height patch.
-##
-##        The stdin is redirected to dmenu.
+##        The stdin is redirected to bemenu.
 ##
 ##        -r
-##               Run dmenu_run instead of dmenu
+##               Run bemenu-run instead of bemenu
 ##
 
 HEIGHT=20
+CURSOR_WIDTH=1
+
 FONT='Lato:style=Bold:size=8'
-PROMPT=''
-NORMAL_BACKGROUND='#383C4A'
-SELECT_BACKGROUND='#5294E2'
-NORMAL_TEXT='#D3DAE3'
-SELECT_TEXT='#FFFFFF'
+TITLE='>'
+
+COLOR_NORMAL='#383C4A'
+COLOR_ACCENT='#5294E2'
+TEXT_NORMAL='#D3DAE3'
+TEXT_ACCENT='#FFFFFF'
 
 CMD=$(if [ "${1:-}" = "-r" ]
       then echo "bemenu-run"
       else echo "bemenu"
       fi)
 
-${CMD} -b -i                       \
-       -H  "${HEIGHT}"             \
-       --fn "${FONT}"              \
-       -p  "${PROMPT}"             \
-       --nb "${NORMAL_BACKGROUND}" \
-       --sb "${SELECT_BACKGROUND}" \
-       --nf "${NORMAL_TEXT}"       \
-       --sf "${SELECT_TEXT}"       \
+${CMD} -b -i                   \
+       -H    "${HEIGHT}"       \
+       --cw  "${CURSOR_WIDTH}" \
+       -p    "${TITLE}"        \
+       --fn  "${FONT}"         \
+       --tb  "${COLOR_ACCENT}" \
+       --fb  "${COLOR_NORMAL}" \
+       --ff  "${TEXT_NORMAL}"  \
+       --cb  "${COLOR_NORMAL}" \
+       --cf  "${TEXT_ACCENT}"  \
+       --nb  "${COLOR_NORMAL}" \
+       --nf  "${TEXT_NORMAL}"  \
+       --hb  "${COLOR_ACCENT}" \
+       --hf  "${TEXT_ACCENT}"  \
+       --fbb "${COLOR_NORMAL}" \
+       --fbf "${TEXT_NORMAL}"  \
+       --sb  "${COLOR_ACCENT}" \
+       --sf  "${TEXT_ACCENT}"  \
+       --ab  "${COLOR_NORMAL}" \
+       --af  "${TEXT_NORMAL}"  \
+       --scb "${COLOR_NORMAL}" \
+       --scf "${TEXT_NORMAL}"  \
        <&0
 
 exit 0
