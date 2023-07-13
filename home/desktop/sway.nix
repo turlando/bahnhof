@@ -51,6 +51,36 @@ in {
         "${m}+Shift+minus" = "focus mode_toggle";
       };
 
+      fonts = {
+        names = [ "Lato" ];
+        style = "Bold";
+        size = 8.0;
+      };
+
+      colors = {
+        focused = {
+          border = "#5294E2";
+          background = "#5294E2";
+          text = "#FFFFFF";
+          indicator = "#2B2E39";
+          childBorder = "#2B2E39";
+        };
+        unfocused = {
+          border = "#2F343F";
+          background = "#2F343F";
+          text = "#D3DAE3";
+          indicator = "#2B2E39";
+          childBorder = "#2B2E39";
+        };
+        urgent = {
+          border = "#F27835";
+          background = "#F27835";
+          text = "#D3DAE3";
+          indicator = "#2B2E39";
+          childBorder = "#2B2E39";
+        };
+      };
+
       bars = [];
 
       startup = [
