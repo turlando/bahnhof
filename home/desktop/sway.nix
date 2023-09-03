@@ -65,7 +65,7 @@ in {
         "${m}+v" = "splitv";
         "${m}+b" = "splith";
 
-        "${m}+Enter" = "exec ${terminal}";
+        "${m}+Return" = "exec ${terminal}";
         "${m}+Space" = "exec ${menu-run}";
         "${m}+Tab" = "exec swaymsg workspace $(${lsws} | ${menu})";
 
