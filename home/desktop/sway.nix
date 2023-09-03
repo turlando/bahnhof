@@ -65,16 +65,13 @@ in {
         "${m}+v" = "splitv";
         "${m}+b" = "splith";
 
-        "${m}+minus" = "floating toggle";
-        "${m}+Shift+minus" = "focus mode_toggle";
-
-        "${m}+r" = "mode resize";
-
         "${m}+Space" = "exec ${menu-run}";
         "${m}+Tab" = "exec swaymsg workspace $(${lsws} | ${menu})";
 
         "${m}+minus" = "floating toggle";
         "${m}+Shift+minus" = "focus mode_toggle";
+
+        "${m}+r" = "mode resize";
       };
 
       fonts = {
