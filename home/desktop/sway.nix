@@ -65,6 +65,7 @@ in {
         "${m}+v" = "splitv";
         "${m}+b" = "splith";
 
+        "${m}+Enter" = "exec ${terminal}"
         "${m}+Space" = "exec ${menu-run}";
         "${m}+Tab" = "exec swaymsg workspace $(${lsws} | ${menu})";
 
@@ -108,7 +109,6 @@ in {
 
       startup = [
         { command = "${pkgs.wayvnc}/bin/wayvnc -p 0.0.0.0"; }
-        { command = terminal; }
       ];
     };
 
